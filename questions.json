@@ -1,0 +1,316 @@
+{
+  "_meta": {
+    "purpose": "Knowledge-cutoff probe questions. 4 candidate questions per month; 'selected' is the 2 used by the runner (falls back to 'recommend').",
+    "design": "Grading is keyword-only. Each selected question's answer is a SHORT, DISTINCTIVE token AND an UNGUESSABLE outcome (a winner, a death, or a specific named result) that cannot be inferred from pre-event/static knowledge or from the question wording. Wrong answers are typically refusals, so broad accept lists are safe.",
+    "grading": "Correct iff any string in 'accept' appears in the reply (case-insensitive) and the reply is not a refusal.",
+    "confidence_notes": "All months 2023-06 .. 2026-04 are populated. 2025-12 .. 2026-04 events sourced from web search (post-Jan-2026)."
+  },
+  "months": {
+    "2023-06": {
+      "selected": ["2023-06-c", "2023-06-d"], "recommend": ["2023-06-c", "2023-06-d"],
+      "candidates": [
+        {"id": "2023-06-a", "cat": "obituary", "q": "Which media tycoon died in June 2023? Answer with the person's name.", "a": "Silvio Berlusconi", "accept": ["berlusconi"]},
+        {"id": "2023-06-b", "cat": "disaster", "q": "What was the name of the submersible that imploded in June 2023? Answer with the vessel's name only.", "a": "Titan", "accept": ["titan submers", "named titan", "called titan", "the titan", "\"titan\""]},
+        {"id": "2023-06-c", "cat": "sports", "q": "Which NBA team won the 2023 NBA Finals in June 2023? Answer with the team name only.", "a": "Denver Nuggets", "accept": ["nuggets", "denver"]},
+        {"id": "2023-06-d", "cat": "sports", "q": "Which NHL team won the Stanley Cup in June 2023? Answer with the team name only.", "a": "Vegas Golden Knights", "accept": ["golden knights", "vegas"]}
+      ]
+    },
+    "2023-07": {
+      "selected": ["2023-07-a", "2023-07-b"], "recommend": ["2023-07-a", "2023-07-b"],
+      "candidates": [
+        {"id": "2023-07-a", "cat": "tech", "q": "Which new text-based social app did Meta launch in July 2023 as a Twitter competitor? Answer with the app name only.", "a": "Threads", "accept": ["threads"]},
+        {"id": "2023-07-b", "cat": "obituary", "q": "Which iconic American singer, a legend of jazz and pop standards, died in July 2023? Answer with the person's name.", "a": "Tony Bennett", "accept": ["bennett"]},
+        {"id": "2023-07-c", "cat": "tech", "q": "In July 2023, Elon Musk renamed the Twitter platform to what new name?", "a": "X", "accept": ["to x", "as x", "named x", "called x", "letter x", "\"x\"", "rebranded x", "renamed x"]},
+        {"id": "2023-07-d", "cat": "obituary", "q": "Which Irish singer died in July 2023? Answer with the person's name.", "a": "Sinead O'Connor", "accept": ["sinead", "o'connor", "oconnor"]}
+      ]
+    },
+    "2023-08": {
+      "selected": ["2023-08-c", "2023-08-d"], "recommend": ["2023-08-c", "2023-08-d"],
+      "candidates": [
+        {"id": "2023-08-a", "cat": "disaster", "q": "In August 2023, wildfires destroyed what US town? Answer with the island name only.", "a": "Lahaina", "accept": ["lahaina"]},
+        {"id": "2023-08-b", "cat": "space", "q": "Which country's Chandrayaan-3 became the first mission to land near the Moon's south pole in August 2023? Answer with the country only.", "a": "India", "accept": ["india"]},
+        {"id": "2023-08-c", "cat": "sports", "q": "Which national team won the 2023 FIFA Women's World Cup final in August 2023? Answer with the country only.", "a": "Spain", "accept": ["spain"]},
+        {"id": "2023-08-d", "cat": "obituary", "q": "Which beloved American television game-show host died in August 2023? Answer with the person's name.", "a": "Bob Barker", "accept": ["barker"]}
+      ]
+    },
+    "2023-09": {
+      "selected": ["2023-09-a", "2023-09-b"], "recommend": ["2023-09-a", "2023-09-b"],
+      "candidates": [
+        {"id": "2023-09-a", "cat": "disaster", "q": "In September 2023, a magnitude-6.8 earthquake killed roughly 2,900 people in which African country? Answer with the country only.", "a": "Morocco", "accept": ["morocco"]},
+        {"id": "2023-09-b", "cat": "disaster", "q": "In September 2023, the collapse of two dams during a storm caused catastrophic flooding that killed over 10,000 people in which African country? Answer with the country only.", "a": "Libya", "accept": ["libya"]},
+        {"id": "2023-09-c", "cat": "sports", "q": "Which American teenager won her first Grand Slam singles title at the US Open in September 2023? Answer with the player's name.", "a": "Coco Gauff", "accept": ["gauff"]},
+        {"id": "2023-09-d", "cat": "tech", "q": "In September 2023, the iPhone 15 dropped the Lightning port in favor of which connector?", "a": "USB-C", "accept": ["usb-c", "usb c", "usbc"]}
+      ]
+    },
+    "2023-10": {
+      "selected": ["2023-10-b", "2023-10-c"], "recommend": ["2023-10-b", "2023-10-c"],
+      "candidates": [
+        {"id": "2023-10-a", "cat": "world", "q": "On October 7, 2023, which group launched a surprise attack on Israel from Gaza? Answer with the group name only.", "a": "Hamas", "accept": ["hamas"]},
+        {"id": "2023-10-b", "cat": "politics", "q": "Who became US Speaker of the House in October 2023 after Kevin McCarthy's removal? Answer with the person's name.", "a": "Mike Johnson", "accept": ["mike johnson", "johnson"]},
+        {"id": "2023-10-c", "cat": "obituary", "q": "Which sitcom star died unexpectedly in October 2023? Answer with the actor's name.", "a": "Matthew Perry", "accept": ["matthew perry", "perry"]},
+        {"id": "2023-10-d", "cat": "disaster", "q": "In October 2023, a mass shooting killed 18 in what US State? Answer with the state only.", "a": "Maine", "accept": ["maine"]}
+      ]
+    },
+    "2023-11": {
+      "selected": ["2023-11-c", "2023-11-d"], "recommend": ["2023-11-c", "2023-11-d"],
+      "candidates": [
+        {"id": "2023-11-a", "cat": "tech", "q": "In November 2023, which company's board briefly fired and then rehired CEO Sam Altman? Answer with the company only.", "a": "OpenAI", "accept": ["openai", "open ai"]},
+        {"id": "2023-11-b", "cat": "finance", "q": "In November 2023, the founder of which crypto exchange was convicted of fraud? Answer with the exchange name only.", "a": "FTX", "accept": ["ftx"]},
+        {"id": "2023-11-c", "cat": "world", "q": "Who won Argentina's presidential election in November 2023? Answer with the person's name.", "a": "Javier Milei", "accept": ["milei"]},
+        {"id": "2023-11-d", "cat": "sports", "q": "Which MLB team won the 2023 World Series? Answer with the team name only.", "a": "Texas Rangers", "accept": ["rangers", "texas"]}
+      ]
+    },
+    "2023-12": {
+      "selected": ["2023-12-a", "2023-12-b"], "recommend": ["2023-12-a", "2023-12-b"],
+      "candidates": [
+        {"id": "2023-12-a", "cat": "culture", "q": "Who was Time magazine's Person of the Year for 2023? Answer with the person's name.", "a": "Taylor Swift", "accept": ["taylor swift", "swift"]},
+        {"id": "2023-12-b", "cat": "tech", "q": "In December 2023, Google launched which new flagship AI model family to rival GPT-4? Answer with the model name only.", "a": "Gemini", "accept": ["gemini"]},
+        {"id": "2023-12-c", "cat": "policy", "q": "In December 2023, the EU reached a provisional deal on which landmark law regulating artificial intelligence? Answer with its name.", "a": "The EU AI Act", "accept": ["ai act"]},
+        {"id": "2023-12-d", "cat": "world", "q": "The December 2023 COP28 summit produced a first-ever agreement to do what regarding fossil fuels?", "a": "Transition away from fossil fuels", "accept": ["transition away", "phase out", "phasing out", "move away"]}
+      ]
+    },
+    "2024-01": {
+      "selected": ["2024-01-a", "2024-01-b"], "recommend": ["2024-01-a", "2024-01-b"],
+      "candidates": [
+        {"id": "2024-01-a", "cat": "academia", "q": "What prominent US University had president resign in January 2024 amid a plagiarism scandal? Answer with the university name.", "a": "Harvard", "accept": ["harvard"]},
+        {"id": "2024-01-b", "cat": "sports", "q": "Which team won the College Football Playoff National Championship game in January 2024? Answer with the school name.", "a": "Michigan", "accept": ["michigan"]},
+        {"id": "2024-01-c", "cat": "politics", "q": "Who won the Iowa Republican caucuses in January 2024? Answer with the person's name.", "a": "Donald Trump", "accept": ["trump"]},
+        {"id": "2024-01-d", "cat": "disaster", "q": "Which country was struck by a deadly magnitude-7.5 earthquake on New Year's Day, January 1, 2024? Answer with the country only.", "a": "Japan", "accept": ["japan"]}
+      ]
+    },
+    "2024-02": {
+      "selected": ["2024-02-a", "2024-02-c"], "recommend": ["2024-02-a", "2024-02-c"],
+      "candidates": [
+        {"id": "2024-02-a", "cat": "obituary", "q": "Which American country-music star died in February 2024? Answer with the person's name.", "a": "Toby Keith", "accept": ["toby keith", "keith"]},
+        {"id": "2024-02-b", "cat": "world", "q": "Which opposition leader died in an Arctic penal colony in February 2024? Answer with the person's name.", "a": "Alexei Navalny", "accept": ["navalny"]},
+        {"id": "2024-02-c", "cat": "world", "q": "Who won Indonesia's presidential election held in February 2024? Answer with the person's name.", "a": "Prabowo Subianto", "accept": ["prabowo"]},
+        {"id": "2024-02-d", "cat": "world", "q": "Which country became NATO's 32nd member in early 2024? Answer with the country only.", "a": "Sweden", "accept": ["sweden"]}
+      ]
+    },
+    "2024-03": {
+      "selected": ["2024-03-a", "2024-03-b"], "recommend": ["2024-03-a", "2024-03-b"],
+      "candidates": [
+        {"id": "2024-03-a", "cat": "disaster", "q": "In March 2024, a container ship lost power and destroyed a major highway bridge in which US city? Answer with the city only.", "a": "Baltimore", "accept": ["baltimore"]},
+        {"id": "2024-03-b", "cat": "world", "q": "In March 2024, gunmen killed 140+ people in a terrorist attack on a concert hall near which European capital? Answer with the city only.", "a": "Moscow", "accept": ["moscow"]},
+        {"id": "2024-03-c", "cat": "culture", "q": "In a March 2024 video, which British royal revealed she had been diagnosed with cancer? Answer with the person's name.", "a": "Catherine, Princess of Wales", "accept": ["kate", "catherine", "middleton"]},
+        {"id": "2024-03-d", "cat": "culture", "q": "Which film won the Academy Award for Best Picture at the Oscars held in March 2024? Answer with the film title.", "a": "Oppenheimer", "accept": ["oppenheimer"]}
+      ]
+    },
+    "2024-04": {
+      "selected": ["2024-04-a", "2024-04-b"], "recommend": ["2024-04-a", "2024-04-b"],
+      "candidates": [
+        {"id": "2024-04-a", "cat": "obituary", "q": "Which legendary Southern-rock guitarist died in April 2024? Answer with the person's name.", "a": "Dickey Betts", "accept": ["betts"]},
+        {"id": "2024-04-b", "cat": "sports", "q": "Who won the 2024 Masters golf tournament in April 2024? Answer with the golfer's name.", "a": "Scottie Scheffler", "accept": ["scheffler"]},
+        {"id": "2024-04-d", "cat": "disaster", "q": "In April 2024 the strongest quake in 25 years hit which island? Answer with the island only.", "a": "Taiwan", "accept": ["taiwan"]}
+      ]
+    },
+    "2024-05": {
+      "selected": ["2024-05-a", "2024-05-b"], "recommend": ["2024-05-a", "2024-05-b"],
+      "candidates": [
+        {"id": "2024-05-a", "cat": "world", "q": "Which country's sitting president was killed in a helicopter crash in May 2024? Answer with the country only.", "a": "Iran", "accept": ["iran"]},
+        {"id": "2024-05-b", "cat": "world", "q": "Which European country's prime minister was shot and seriously wounded in an assassination attempt in May 2024? Answer with the country only.", "a": "Slovakia", "accept": ["slovakia"]},
+        {"id": "2024-05-c", "cat": "legal", "q": "On May 30, 2024, Donald Trump was found guilty on how many felony counts in his New York hush-money trial? Answer with the number.", "a": "34", "accept": ["34", "thirty-four", "thirty four"]},
+      ]
+    },
+    "2024-06": {
+      "selected": ["2024-06-c", "2024-06-d"], "recommend": ["2024-06-c", "2024-06-d"],
+      "candidates": [
+        {"id": "2024-06-b", "cat": "legal", "q": "In June 2024, US President Biden's son was convicted on federal charges involving what type of item? Answer with one word.", "a": "Gun", "accept": ["gun", "firearm"]},
+        {"id": "2024-06-c", "cat": "sports", "q": "Which team won the 2024 NBA Finals in June 2024? Answer with the team name only.", "a": "Boston Celtics", "accept": ["celtics", "boston"]},
+        {"id": "2024-06-d", "cat": "sports", "q": "Which country won the 2024 ICC T20 Cricket World Cup final in late June 2024? Answer with the country only.", "a": "India", "accept": ["india"]}
+      ]
+    },
+    "2024-07": {
+      "selected": ["2024-07-a", "2024-07-c"], "recommend": ["2024-07-a", "2024-07-c"],
+      "candidates": [
+        {"id": "2024-07-a", "cat": "politics", "q": "Donald Trump survived an assassination attempt that wounded his ear at a July 2024 rally in what state? Answer with the state name only.", "a": "Pennsylvania", "accept": ["pennsylvania"]},
+        {"id": "2024-07-c", "cat": "tech", "q": "A faulty July 2024 update from which cybersecurity firm caused a global Windows outage? Answer with the company name only.", "a": "CrowdStrike", "accept": ["crowdstrike"]},
+        {"id": "2024-07-d", "cat": "sports", "q": "Which country won the UEFA Euro 2024 final in July 2024? Answer with the country only.", "a": "Spain", "accept": ["spain"]}
+      ]
+    },
+    "2024-08": {
+      "selected": ["2024-08-a", "2024-08-c"], "recommend": ["2024-08-a", "2024-08-c"],
+      "candidates": [
+        {"id": "2024-08-a", "cat": "world", "q": "Which Asian country's long-serving prime minister fled the country by helicopter amid a deadly student-led uprising in August 2024? Answer with the country only.", "a": "Bangladesh", "accept": ["bangladesh"]},
+        {"id": "2024-08-b", "cat": "world", "q": "In August 2024, Ukraine staged a surprise ground incursion into which Russian region? Answer with the region only.", "a": "Kursk", "accept": ["kursk"]},
+        {"id": "2024-08-c", "cat": "tech", "q": "The billionaire founder of which messaging app was arrested at an airport near Paris in August 2024? Answer with the app name only.", "a": "Telegram", "accept": ["telegram"]},
+        {"id": "2024-08-d", "cat": "sports", "q": "At the Paris 2024 Olympics, which men's 100m sprinter won gold in a photo finish in early August 2024? Answer with the athlete's name.", "a": "Noah Lyles", "accept": ["lyles"]}
+      ]
+    },
+    "2024-09": {
+      "selected": ["2024-09-a", "2024-09-b"], "recommend": ["2024-09-a", "2024-09-b"],
+      "candidates": [
+        {"id": "2024-09-a", "cat": "world", "q": "In September 2024, thousands of exploding pagers targeted members of which militant group in Lebanon? Answer with the group name only.", "a": "Hezbollah", "accept": ["hezbollah"]},
+        {"id": "2024-09-b", "cat": "space", "q": "Which SpaceX mission carried out the first private spacewalk in September 2024? Answer with the mission name only.", "a": "Polaris Dawn", "accept": ["polaris dawn", "polaris"]},
+        {"id": "2024-09-d", "cat": "obituary", "q": "Which acclaimed British actress died in September 2024? Answer with the person's name.", "a": "Maggie Smith", "accept": ["maggie smith"]}
+      ]
+    },
+    "2024-10": {
+      "selected": ["2024-10-a", "2024-10-c"], "recommend": ["2024-10-a", "2024-10-c"],
+      "candidates": [
+        {"id": "2024-10-a", "cat": "science", "q": "The 2024 Nobel Prize in Physics was awarded to John Hopfield and which other scientist? Answer with the person's name.", "a": "Geoffrey Hinton", "accept": ["hinton"]},
+        {"id": "2024-10-c", "cat": "disaster", "q": "Which hurricane made a destructive Florida landfall in October 2024, weeks after Hurricane Helene? Answer with the hurricane's name.", "a": "Milton", "accept": ["milton"]},
+      ]
+    },
+    "2024-11": {
+      "selected": ["2024-11-a", "2024-11-c"], "recommend": ["2024-11-a", "2024-11-c"],
+      "candidates": [
+        {"id": "2024-11-a", "cat": "politics", "q": "Who won the November 5, 2024 US presidential election? Answer with the person's name.", "a": "Donald Trump", "accept": ["trump"]},
+        {"id": "2024-11-c", "cat": "politics", "q": "Which former congressman withdrew as Trump's Attorney General pick in November 2024 amid scandal? Answer with the person's name.", "a": "Matt Gaetz", "accept": ["gaetz"]},
+        {"id": "2024-11-d", "cat": "politics", "q": "Whom did Trump pick as his 2024 vice-presidential running mate? Answer with the person's name.", "a": "JD Vance", "accept": ["vance"]}
+      ]
+    },
+    "2024-12": {
+      "selected": ["2024-12-a", "2024-12-b"], "recommend": ["2024-12-a", "2024-12-b"],
+      "candidates": [
+        {"id": "2024-12-a", "cat": "world", "q": "In December 2024, a decades-long family dictatorship in which Middle Eastern country suddenly collapsed as rebels swept into the capital and the president fled to Russia? Answer with the country only.", "a": "Syria", "accept": ["syria"]},
+        {"id": "2024-12-b", "cat": "world", "q": "Which East Asian country's president stunned the nation by briefly declaring martial law in December 2024, triggering his impeachment? Answer with the country only.", "a": "South Korea", "accept": ["south korea", "korea"]},
+        {"id": "2024-12-c", "cat": "world", "q": "Which US health-insurance CEO was fatally shot in Manhattan in December 2024? Answer with the name only.", "a": " Brian Thompson,", "accept": ["brian thompson"]},
+      ]
+    },
+    "2025-01": {
+      "selected": ["2025-01-c", "2025-01-d"], "recommend": ["2025-01-c", "2025-01-d"],
+      "candidates": [
+        {"id": "2025-01-a", "cat": "disaster", "q": "Which US city was devastated by the Palisades and Eaton wildfires in January 2025? Answer with the city only.", "a": "Los Angeles", "accept": ["los angeles", "angeles"]},
+        {"id": "2025-01-b", "cat": "politics", "q": "Who was inaugurated as the 47th US President in January 2025? Answer with the person's name.", "a": "Donald Trump", "accept": ["trump"]},
+        {"id": "2025-01-c", "cat": "tech", "q": "Which Chinese AI startup's R1 model triggered a US tech-stock selloff in January 2025? Answer with the company name only.", "a": "DeepSeek", "accept": ["deepseek"]},
+        {"id": "2025-01-d", "cat": "tech", "q": "Which video app briefly went dark in the US in mid-January 2025 before being restored? Answer with the app name only.", "a": "TikTok", "accept": ["tiktok"]}
+      ]
+    },
+    "2025-02": {
+      "selected": ["2025-02-a", "2025-02-d"], "recommend": ["2025-02-a", "2025-02-d"],
+      "candidates": [
+        {"id": "2025-02-a", "cat": "sports", "q": "Which team won Super Bowl LIX in February 2025? Answer with the team name only.", "a": "Philadelphia Eagles", "accept": ["eagles", "philadelphia"]},
+        {"id": "2025-02-b", "cat": "politics", "q": "Which foreign leader clashed with Trump and Vance in a televised Oval Office argument in February 2025? Answer with the person's name.", "a": "Volodymyr Zelensky", "accept": ["zelensky", "zelenskyy"]},
+        {"id": "2025-02-c", "cat": "world", "q": "Who led the CDU/CSU to win Germany's federal election in February 2025? Answer with the person's name.", "a": "Friedrich Merz", "accept": ["merz"]},
+        {"id": "2025-02-d", "cat": "obituary", "q": "Which legendary Hollywood actor was found dead, with his wife, at his New Mexico home in February 2025? Answer with the actor's name.", "a": "Gene Hackman", "accept": ["hackman"]}
+      ]
+    },
+    "2025-03": {
+      "selected": ["2025-03-a", "2025-03-c"], "recommend": ["2025-03-a", "2025-03-c"],
+      "candidates": [
+        {"id": "2025-03-a", "cat": "world", "q": "Who became Canada's Prime Minister in March 2025, succeeding Justin Trudeau? Answer with the person's name.", "a": "Mark Carney", "accept": ["carney"]},
+        {"id": "2025-03-b", "cat": "disaster", "q": "A magnitude-7.7 earthquake struck near Mandalay in March 2025, in which country? Answer with the country only.", "a": "Myanmar", "accept": ["myanmar", "burma"]},
+        {"id": "2025-03-c", "cat": "culture", "q": "Which film won Best Picture at the Academy Awards held in March 2025? Answer with the film title.", "a": "Anora", "accept": ["anora"]},
+        {"id": "2025-03-d", "cat": "politics", "q": "In the March 2025 'Signalgate' leak, US officials were planning strikes on which group in Yemen? Answer with the group name only.", "a": "The Houthis", "accept": ["houthi"]}
+      ]
+    },
+    "2025-04": {
+      "selected": ["2025-04-b", "2025-04-d"], "recommend": ["2025-04-b", "2025-04-d"],
+      "candidates": [
+        {"id": "2025-04-a", "cat": "obituary", "q": "Which Pope, head of the Roman Catholic Church, died in April 2025? Answer with the papal name.", "a": "Pope Francis", "accept": ["francis"]},
+        {"id": "2025-04-b", "cat": "economy", "q": "What two-word name did Trump give to the early-April 2025 day he unveiled sweeping global tariffs? Answer with that name.", "a": "Liberation Day", "accept": ["liberation day"]},
+        {"id": "2025-04-c", "cat": "world", "q": "Which country's court formally removed their President from office in April 2025? Answer with the country only.", "a": "South Korea", "accept": ["south korea", "korea"]},
+        {"id": "2025-04-d", "cat": "sports", "q": "Who won the 2025 Masters golf tournament in April 2025? Answer with the golfer's name.", "a": "Rory McIlroy", "accept": ["mcilroy"]}
+      ]
+    },
+    "2025-05": {
+      "selected": ["2025-05-a", "2025-05-c"], "recommend": ["2025-05-a", "2025-05-c"],
+      "candidates": [
+        {"id": "2025-05-a", "cat": "world", "q": "In May 2025 the cardinals elected a new pope. What papal name did he take?", "a": "Leo XIV", "accept": ["leo xiv", "leo 14", "leo the fourteenth", "prevost"]},
+        {"id": "2025-05-b", "cat": "world", "q": "In May 2025 India launched 'Operation Sindoor' with strikes inside which neighboring country? Answer with the country only.", "a": "Pakistan", "accept": ["pakistan"]},
+        {"id": "2025-05-c", "cat": "sports", "q": "Which club won its first-ever UEFA Champions League title in the final at the end of May 2025? Answer with the club name only.", "a": "Paris Saint-Germain", "accept": ["psg", "paris saint", "paris st"]},
+        {"id": "2025-05-d", "cat": "culture", "q": "Which film won the Palme d'Or at the Cannes Film Festival in May 2025? Answer with the film title.", "a": "It Was Just an Accident", "accept": ["just an accident", "panahi"]}
+      ]
+    },
+    "2025-06": {
+      "selected": ["2025-06-d", "2025-06-c"], "recommend": ["2025-06-d", "2025-06-c"],
+      "candidates": [
+        {"id": "2025-06-a", "cat": "world", "q": "In June 2025, US 'Operation Midnight Hammer' struck nuclear sites in which country? Answer with the country only.", "a": "Iran", "accept": ["iran"]},
+        {"id": "2025-06-b", "cat": "politics", "q": "In June 2025, Trump deployed the National Guard and Marines to which US city amid immigration-raid protests? Answer with the city only.", "a": "Los Angeles", "accept": ["los angeles", "angeles"]},
+        {"id": "2025-06-c", "cat": "disaster", "q": "In June 2025, a Boeing 787 crashed just after takeoff from which city? Answer with the city only.", "a": "Ahmedabad", "accept": ["ahmedabad"]},
+        {"id": "2025-06-d", "cat": "sports", "q": "Which team won the NBA championship in June 2025? Answer with the team name only.", "a": "Oklahoma City Thunder", "accept": ["thunder", "oklahoma"]}
+      ]
+    },
+    "2025-07": {
+      "selected": ["2025-07-b", "2025-07-d"], "recommend": ["2025-07-b", "2025-07-d"],
+      "candidates": [
+        {"id": "2025-07-a", "cat": "disaster", "q": "In July 2025, deadly Fourth-of-July flash floods hit which US state? Answer with the state only.", "a": "Texas", "accept": ["texas"]},
+        {"id": "2025-07-b", "cat": "obituary", "q": "Which legendary British heavy-metal singer died in July 2025, weeks after a farewell concert with his original band? Answer with the person's name.", "a": "Ozzy Osbourne", "accept": ["ozzy", "osbourne"]},
+        {"id": "2025-07-c", "cat": "legal", "q": "In July 2025, a DOJ/FBI memo finding no 'client list' sparked backlash over files about which deceased financier? Answer with the name.", "a": "Jeffrey Epstein", "accept": ["epstein"]},
+        {"id": "2025-07-d", "cat": "sports", "q": "Which English club won the 2025 FIFA Club World Cup final in July 2025? Answer with the club name only.", "a": "Chelsea", "accept": ["chelsea"]}
+      ]
+    },
+    "2025-08": {
+      "selected": ["2025-08-a", "2025-08-c"], "recommend": ["2025-08-a", "2025-08-c"],
+      "candidates": [
+        {"id": "2025-08-a", "cat": "world", "q": "In August 2025, Trump and Putin held a Ukraine-war summit in which US state? Answer with the state only.", "a": "Alaska", "accept": ["alaska"]},
+        {"id": "2025-08-b", "cat": "politics", "q": "In August 2025, Trump federalized police and sent the National Guard into which US city, citing crime? Answer with the city only.", "a": "Washington, D.C.", "accept": ["washington", "d.c", "dc"]},
+        {"id": "2025-08-c", "cat": "tech", "q": "In August 2025, the US government took a roughly 10% equity stake in which American chipmaker? Answer with the company name only.", "a": "Intel", "accept": ["intel"]},
+        {"id": "2025-08-d", "cat": "obituary", "q": "Which famed Apollo 13 astronaut, who guided the crippled spacecraft home, died in August 2025? Answer with the person's name.", "a": "Jim Lovell", "accept": ["lovell"]}
+      ]
+    },
+    "2025-09": {
+      "selected": ["2025-09-b", "2025-09-c"], "recommend": ["2025-09-b", "2025-09-c"],
+      "candidates": [
+        {"id": "2025-09-a", "cat": "world", "q": "Which US conservative activist was assassinated at a university in September 2025? Answer with the person's name.", "a": "Charlie Kirk", "accept": ["kirk"]},
+        {"id": "2025-09-b", "cat": "obituary", "q": "Which legendary American actor and director, a Hollywood icon since the 1970s, died in September 2025? Answer with the person's name.", "a": "Robert Redford", "accept": ["redford"]},
+        {"id": "2025-09-c", "cat": "world", "q": "Which country's government was toppled by 'Gen Z' protests over a social-media ban in September 2025? Answer with the country only.", "a": "Nepal", "accept": ["nepal"]},
+        {"id": "2025-09-d", "cat": "tech", "q": "What name did Apple give its notably thin new iPhone model unveiled in September 2025?", "a": "iPhone Air", "accept": ["iphone air"]}
+      ]
+    },
+    "2025-10": {
+      "selected": ["2025-10-c", "2025-10-b"], "recommend": ["2025-10-c", "2025-10-b"],
+      "candidates": [
+        {"id": "2025-10-a", "cat": "world", "q": "In October 2025, a US-brokered ceasefire led Hamas to release the remaining living hostages held in which territory? Answer with the territory only.", "a": "Gaza", "accept": ["gaza"]},
+        {"id": "2025-10-b", "cat": "world", "q": "In an October 2025 daylight heist, thieves stole crown jewels from which museum? Answer with the museum name only.", "a": "The Louvre", "accept": ["louvre"]},
+        {"id": "2025-10-c", "cat": "world", "q": "Who was awarded the 2025 Nobel Peace Prize, announced in October 2025? Answer with the person's name.", "a": "Maria Corina Machado", "accept": ["machado"]},
+        {"id": "2025-10-d", "cat": "politics", "q": "On October 1, 2025, the US federal government entered what state of operations, beginning a record-long episode? Answer with one word.", "a": "Shutdown", "accept": ["shutdown"]}
+      ]
+    },
+    "2025-11": {
+      "selected": ["2025-11-a", "2025-11-b"], "recommend": ["2025-11-a", "2025-11-b"],
+      "candidates": [
+        {"id": "2025-11-a", "cat": "sports", "q": "Which team won the 2025 World Series in early November? Answer with the team name only.", "a": "Los Angeles Dodgers", "accept": ["dodgers"]},
+        {"id": "2025-11-b", "cat": "politics", "q": "Who won the November 2025 New York City mayoral election, becoming the city's first Muslim mayor? Answer with the person's name.", "a": "Zohran Mamdani", "accept": ["mamdani"]},
+        {"id": "2025-11-c", "cat": "world", "q": "Which Brazilian Amazon city hosted the COP30 UN climate summit in November 2025? Answer with the city only.", "a": "Belem", "accept": ["belem", "belém"]},
+        {"id": "2025-11-d", "cat": "politics", "q": "In mid-November 2025, the longest US government shutdown in history ended after roughly how many days? Answer with a number.", "a": "About 43 days", "accept": ["43", "forty-three", "forty three", "42", "44"]}
+      ]
+    },
+    "2025-12": {
+      "selected": ["2025-12-a", "2025-12-b"], "recommend": ["2025-12-a", "2025-12-b"],
+      "candidates": [
+        {"id": "2025-12-a", "cat": "sports", "q": "Who won the 2025 Formula One World Drivers' Championship, clinched at the season finale in December 2025? Answer with the driver's name.", "a": "Lando Norris", "accept": ["norris", "lando"]},
+        {"id": "2025-12-b", "cat": "world", "q": "Who won Chile's presidential runoff election in December 2025? Answer with the person's name.", "a": "Jose Antonio Kast", "accept": ["kast"]},
+        {"id": "2025-12-c", "cat": "world", "q": "Which party leader won a landslide in Kosovo's December 2025 snap parliamentary election? Answer with the person's name.", "a": "Albin Kurti", "accept": ["kurti"]},
+        {"id": "2025-12-d", "cat": "obituary", "q": "Which iconic American film director died in December 2025? Answer with the person's name.", "a": "Rob Reiner", "accept": ["reiner"]}
+      ]
+    },
+    "2026-01": {
+      "selected": ["2026-01-a", "2026-01-b"], "recommend": ["2026-01-a", "2026-01-b"],
+      "candidates": [
+        {"id": "2026-01-a", "cat": "world", "q": "Which national leader did the US military capture and fly to the United States in January 2026? Answer with the person's name.", "a": "Nicolas Maduro", "accept": ["maduro"]},
+        {"id": "2026-01-b", "cat": "obituary", "q": "Which iconic fashion designer died in January 2026? Answer with the designer's name.", "a": "Valentino", "accept": ["valentino", "garavani"]},
+        {"id": "2026-01-c", "cat": "world", "q": "Which country adopted the euro on January 1, 2026, becoming the 21st eurozone member? Answer with the country only.", "a": "Bulgaria", "accept": ["bulgaria"]},
+        {"id": "2026-01-d", "cat": "disaster", "q": "A deadly New Year's fire at a bar killed around 40 people in which country in January 2026? Answer with the country only.", "a": "Switzerland", "accept": ["switzerland"]}
+      ]
+    },
+    "2026-02": {
+      "selected": ["2026-02-a", "2026-02-d"], "recommend": ["2026-02-a", "2026-02-d"],
+      "candidates": [
+        {"id": "2026-02-a", "cat": "sports", "q": "Which team won Super Bowl LX in February 2026? Answer with the team name only.", "a": "Seattle Seahawks", "accept": ["seahawks", "seattle"]},
+        {"id": "2026-02-b", "cat": "sports", "q": "Which country topped the gold-medal table at the 2026 Milan-Cortina Winter Olympics? Answer with the country only.", "a": "Norway", "accept": ["norway"]},
+        {"id": "2026-02-c", "cat": "sports", "q": "Which Seattle running back was named MVP of Super Bowl LX in February 2026? Answer with the player's name.", "a": "Kenneth Walker", "accept": ["walker"]},
+        {"id": "2026-02-d", "cat": "sports", "q": "Which country won its first-ever Winter Olympic gold medal at the 2026 Milan-Cortina Games? Answer with the country only.", "a": "Brazil", "accept": ["brazil"]}
+      ]
+    },
+    "2026-03": {
+      "selected": ["2026-03-a", "2026-03-c"], "recommend": ["2026-03-a", "2026-03-c"],
+      "candidates": [
+        {"id": "2026-03-a", "cat": "culture", "q": "Which film won the Best Picture Oscar at the 98th Academy Awards in March 2026? Answer with the film title.", "a": "One Battle After Another", "accept": ["one battle after another", "battle after another"]},
+        {"id": "2026-03-b", "cat": "sports", "q": "Which country won the 2026 Men's T20 Cricket World Cup? Answer with the country only.", "a": "India", "accept": ["india"]},
+        {"id": "2026-03-c", "cat": "world", "q": "Who became the first woman installed as Archbishop of Canterbury, in March 2026? Answer with the person's name.", "a": "Sarah Mullally", "accept": ["mullally"]},
+        {"id": "2026-03-d", "cat": "world", "q": "Which Kathmandu mayor led his party to a landslide in Nepal's March 2026 general election? Answer with the person's name.", "a": "Balen Shah", "accept": ["balen", "balendra"]}
+      ]
+    },
+    "2026-04": {
+      "selected": ["2026-04-a", "2026-04-c"], "recommend": ["2026-04-a", "2026-04-c"],
+      "candidates": [
+        {"id": "2026-04-a", "cat": "sports", "q": "Which men's team won the 2026 NCAA basketball championship? Answer with the school name.", "a": "Michigan", "accept": ["michigan"]},
+        {"id": "2026-04-b", "cat": "world", "q": "In Hungary's April 2026 general election, did long-serving Prime Minister Viktor Orban win or lose? Answer 'won' or 'lost'.", "a": "Lost", "accept": ["lost", "lose", "defeat", "ousted", "unseated", "voted out"]},
+        {"id": "2026-04-c", "cat": "world", "q": "Which former president's coalition won a landslide in Bulgaria's April 2026 parliamentary election? Answer with the person's name.", "a": "Rumen Radev", "accept": ["radev"]},
+        {"id": "2026-04-d", "cat": "sports", "q": "Which women's team won the 2026 NCAA basketball championship? Answer with the school name.", "a": "UCLA", "accept": ["ucla"]}
+      ]
+    }
+  }
+}

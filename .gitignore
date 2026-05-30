@@ -1,0 +1,11 @@
+.env
+__pycache__/
+*.pyc
+.venv/
+venv/
+out/*.json
+out/*.csv
+out/*.md
+out/*.log
+!out/.gitkeep
+.claude/
