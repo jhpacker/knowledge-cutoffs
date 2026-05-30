@@ -249,7 +249,7 @@
     "2025-12": {
       "questions": [
         {"id": "2025-12-a", "cat": "sports", "q": "Who won the 2025 Formula One World Drivers' Championship, clinched at the season finale in December 2025? Answer with the driver's name.", "a": "Lando Norris", "accept": ["norris", "lando"]},
-        {"id": "2025-12-b", "cat": "disaster", "q": "In late 2025, catastrophic flooding killed over a thousand people across the island of Sumatra in which Asian country? Answer with the country only.", "a": "Indonesia", "accept": ["indonesia"]},
+        {"id": "2025-12-b", "cat": "disaster", "q": "In late 2025, catastrophic flooding killed over a thousand people in which Asian country? Answer with the country only.", "a": "Indonesia", "accept": ["indonesia"]},
         {"id": "2025-12-c", "cat": "world", "q": "Which party leader won a landslide in Kosovo's December 2025 snap parliamentary election? Answer with the person's name.", "a": "Albin Kurti", "accept": ["kurti"]},
         {"id": "2025-12-d", "cat": "obituary", "q": "Which iconic American film director died in December 2025? Answer with the person's name.", "a": "Rob Reiner", "accept": ["reiner"]}
       ]
