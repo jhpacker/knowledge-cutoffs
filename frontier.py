@@ -39,6 +39,14 @@ FRONTIER = [
     "anthropic/claude-opus-4.8",
 ]
 
+# Provider-official claimed cutoffs not (yet) in the HaoooWang repo or OpenRouter's
+# `knowledge_cutoff` field. For Anthropic we use the *Training Data* cut-off per
+# the project convention. Source: Anthropic docs "Latest models comparison".
+# https://platform.claude.com/docs/en/about-claude/models/overview
+OFFICIAL_CUTOFFS = {
+    "anthropic/claude-opus-4.8": "2026-01",
+}
+
 
 def probe_one(client, lookup, grader, months, questions, catalog, slug) -> dict:
     m = catalog.get(slug, {"id": slug, "name": slug})
@@ -62,6 +70,7 @@ def probe_one(client, lookup, grader, months, questions, catalog, slug) -> dict:
         "model": slug, "name": name, "released": release_date(m),
         "repo_cutoff": lookup.match(m).cutoff,
         "openrouter_cutoff": openrouter_published_cutoff(m),
+        "claimed_cutoff": OFFICIAL_CUTOFFS.get(slug),
         "self_reported_cutoff": self_cut, "self_reported_raw": self_raw,
         "tested_cutoff": tested,
         "partial_months": [d["month"] for d in detail if d["status"] == "partial"],
@@ -85,6 +94,7 @@ def main() -> int:
         if slug in existing:
             r = dict(existing[slug])
             r["released"] = release_date(catalog.get(slug, {}))
+            r["claimed_cutoff"] = OFFICIAL_CUTOFFS.get(slug)
             print(f"  {slug}: reused (tested {r.get('tested_cutoff')}), released {r['released']}")
             rows.append(r)
         else:

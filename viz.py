@@ -174,7 +174,7 @@ def main() -> int:
     all_dates = []
     for r in rows:
         for v in (r.get("tested_cutoff"), r.get("openrouter_cutoff"),
-                  r.get("self_reported_cutoff")):
+                  r.get("claimed_cutoff"), r.get("self_reported_cutoff")):
             d = ym_to_date(v)
             if d:
                 all_dates.append(d)
@@ -194,7 +194,10 @@ def main() -> int:
     off = bh + 0.02      # vertical offset between adjacent bars
 
     for yi, r in zip(y, rows):
-        claimed = ym_to_date(r.get("openrouter_cutoff"))
+        # Claimed = provider-official cutoff if present (e.g. Anthropic's docs),
+        # else OpenRouter's published field.
+        claimed_ym = r.get("claimed_cutoff") or r.get("openrouter_cutoff")
+        claimed = ym_to_date(claimed_ym)
         self_rep = ym_to_date(r.get("self_reported_cutoff"))
         tested = ym_to_date(r.get("tested_cutoff"))
         mp_str = most_recent_partial(r)
@@ -220,7 +223,7 @@ def main() -> int:
         if claimed:
             ax.barh(y_claim, mdates.date2num(claimed) - base_num, left=base_num,
                     height=bh, color=c_claim, zorder=2)
-            ax.text(mdates.date2num(claimed) + 6, y_claim, r["openrouter_cutoff"],
+            ax.text(mdates.date2num(claimed) + 6, y_claim, claimed_ym,
                     va="center", ha="left", fontsize=7.5, color=t_claim)
 
         # --- Self-reported bar (model's own claim) ---
@@ -279,7 +282,7 @@ def main() -> int:
         # Bars are brand-colored (color = lab), so the legend explains the SHADE
         # ramp (shade = signal) with a neutral grey example.
         legend = [
-            Patch(facecolor="#cfcfcf", label="Claimed (OpenRouter)"),
+            Patch(facecolor="#cfcfcf", label="Claimed (provider docs / OpenRouter)"),
             Patch(facecolor="#7d7d7d", label="Self-reported (model's own claim)"),
             Patch(facecolor="#1c1c1c", label="Observed (tested, all-4 confirmed)"),
             Patch(facecolor="#e2e2e2", edgecolor="#1c1c1c", hatch="xxx",
@@ -291,7 +294,7 @@ def main() -> int:
                   title_fontsize=7.5)
     else:
         legend = [
-            Patch(facecolor=C_CLAIM, label="Claimed recency (OpenRouter)"),
+            Patch(facecolor=C_CLAIM, label="Claimed recency (provider docs / OpenRouter)"),
             Patch(facecolor=C_SELF, label="Self-reported recency (model's own claim)"),
             Patch(facecolor=C_OBS, label="Observed recency (tested, all-4 confirmed)"),
             Patch(facecolor=C_PARTIAL, edgecolor=C_OBS, hatch="xxx",
