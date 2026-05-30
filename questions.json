@@ -104,7 +104,7 @@
     },
     "2024-06": {
       "questions": [
-        {"id": "2024-06-a", "cat": "disaster", "q": "In June 2024, extreme heat during the annual Hajj pilgrimage killed over a thousand people in which country? Answer with the country only.", "a": "Saudi Arabia", "accept": ["saudi"]},
+        {"id": "2024-06-a", "cat": "disaster", "q": "In June 2024, extreme heat during a religious event killed over a thousand people in which country? Answer with the country only.", "a": "Saudi Arabia", "accept": ["saudi"]},
         {"id": "2024-06-b", "cat": "sports", "q": "Which NHL team won the Stanley Cup in June 2024? Answer with the team name only.", "a": "Florida Panthers", "accept": ["panthers", "florida"]},
         {"id": "2024-06-c", "cat": "sports", "q": "Which team won the 2024 NBA Finals in June 2024? Answer with the team name only.", "a": "Boston Celtics", "accept": ["celtics", "boston"]},
         {"id": "2024-06-d", "cat": "sports", "q": "Which country won the 2024 ICC T20 Cricket World Cup final in late June 2024? Answer with the country only.", "a": "India", "accept": ["india"]}
@@ -145,14 +145,14 @@
     "2024-11": {
       "questions": [
         {"id": "2024-11-a", "cat": "sports", "q": "Which country won the 2024 Davis Cup tennis final in November 2024? Answer with the country only.", "a": "Italy", "accept": ["italy"]},
-        {"id": "2024-11-b", "cat": "disaster", "q": "In late 2024, catastrophic flash floods killed over 200 people around the city of Valencia in which country? Answer with the country only.", "a": "Spain", "accept": ["spain"]},
+        {"id": "2024-11-b", "cat": "disaster", "q": "In late 2024, catastrophic flash floods killed over 200 peopl in which European country? Answer with the country only.", "a": "Spain", "accept": ["spain"]},
         {"id": "2024-11-c", "cat": "sports", "q": "Which driver clinched the Formula One World Championship in November 2024? Answer with the driver's name.", "a": "Max Verstappen", "accept": ["verstappen"]},
         {"id": "2024-11-d", "cat": "politics", "q": "Whom did Trump pick as his 2024 vice-presidential running mate? Answer with the person's name.", "a": "JD Vance", "accept": ["vance"]}
       ]
     },
     "2024-12": {
       "questions": [
-        {"id": "2024-12-a", "cat": "disaster", "q": "In December 2024, Cyclone Chido caused catastrophic destruction on which French Indian Ocean territory? Answer with the territory only.", "a": "Mayotte", "accept": ["mayotte"]},
+        {"id": "2024-12-a", "cat": "disaster", "q": "In December 2024, Cyclone Chido caused catastrophic destruction on which Indian Ocean territory? Answer with the territory only.", "a": "Mayotte", "accept": ["mayotte"]},
         {"id": "2024-12-b", "cat": "world", "q": "Which East Asian country's president stunned the nation by briefly declaring martial law in December 2024, triggering his impeachment? Answer with the country only.", "a": "South Korea", "accept": ["south korea", "korea"]},
         {"id": "2024-12-c", "cat": "world", "q": "Which US health-insurance CEO was fatally shot in Manhattan in December 2024? Answer with the name only.", "a": "Brian Thompson", "accept": ["brian thompson", "thompson"]},
         {"id": "2024-12-d", "cat": "disaster", "q": "In December 2024, an Azerbaijan Airlines plane crashed in which country? Answer with the country only.", "a": "Kazakhstan", "accept": ["kazakhstan"]}
@@ -201,7 +201,7 @@
     "2025-06": {
       "questions": [
         {"id": "2025-06-a", "cat": "sports", "q": "Who won the 2025 US Open golf championship in June 2025? Answer with the golfer's name.", "a": "J.J. Spaun", "accept": ["spaun"]},
-        {"id": "2025-06-b", "cat": "sports", "q": "Which NHL team won back-to-back Stanley Cups, repeating as champions in June 2025? Answer with the team name only.", "a": "Florida Panthers", "accept": ["panthers", "florida"]},
+        {"id": "2025-06-b", "cat": "sports", "q": "Which NHL team won the Stanley Cup in June 2025? Answer with the team name only.", "a": "Florida Panthers", "accept": ["panthers", "florida"]},
         {"id": "2025-06-c", "cat": "disaster", "q": "In June 2025, a Boeing 787 crashed just after takeoff from which city? Answer with the city only.", "a": "Ahmedabad", "accept": ["ahmedabad"]},
         {"id": "2025-06-d", "cat": "sports", "q": "Which team won the NBA championship in June 2025? Answer with the team name only.", "a": "Oklahoma City Thunder", "accept": ["thunder", "oklahoma"]}
       ]
@@ -227,22 +227,22 @@
         {"id": "2025-09-a", "cat": "world", "q": "Which US conservative activist was assassinated at a university in September 2025? Answer with the person's name.", "a": "Charlie Kirk", "accept": ["kirk"]},
         {"id": "2025-09-b", "cat": "obituary", "q": "Which legendary American actor and director, a Hollywood icon since the 1970s, died in September 2025? Answer with the person's name.", "a": "Robert Redford", "accept": ["redford"]},
         {"id": "2025-09-c", "cat": "world", "q": "Which country's government was toppled by 'Gen Z' protests over a social-media ban in September 2025? Answer with the country only.", "a": "Nepal", "accept": ["nepal"]},
-        {"id": "2025-09-d", "cat": "obituary", "q": "Which legendary Italian fashion designer died in September 2025? Answer with the designer's name.", "a": "Giorgio Armani", "accept": ["armani"]}
+        {"id": "2025-09-d", "cat": "obituary", "q": "Which legendary fashion designer died in September 2025? Answer with the designer's name.", "a": "Giorgio Armani", "accept": ["armani"]}
       ]
     },
     "2025-10": {
       "questions": [
         {"id": "2025-10-a", "cat": "sports", "q": "Which team won the 2025 WNBA Finals in October 2025? Answer with the team name only.", "a": "Las Vegas Aces", "accept": ["aces", "las vegas"]},
-        {"id": "2025-10-b", "cat": "world", "q": "In an October 2025 daylight heist, thieves stole crown jewels from which museum? Answer with the museum name only.", "a": "The Louvre", "accept": ["louvre"]},
+        {"id": "2025-10-b", "cat": "obituary", "q": "Which world-renowned British scientist and conservationist died in October 2025, aged 91? Answer with the person's name.", "a": "Jane Goodall", "accept": ["goodall"]},
         {"id": "2025-10-c", "cat": "world", "q": "Who was awarded the 2025 Nobel Peace Prize, announced in October 2025? Answer with the person's name.", "a": "Maria Corina Machado", "accept": ["machado"]},
-        {"id": "2025-10-d", "cat": "disaster", "q": "In late October 2025, the powerful Hurricane Melissa made a catastrophic landfall on which Caribbean island nation? Answer with the country only.", "a": "Jamaica", "accept": ["jamaica"]}
+        {"id": "2025-10-d", "cat": "disaster", "q": "In late October 2025, the powerful Hurricane Melissa made a catastrophic landfall on which island nation? Answer with the country only.", "a": "Jamaica", "accept": ["jamaica"]}
       ]
     },
     "2025-11": {
       "questions": [
         {"id": "2025-11-a", "cat": "sports", "q": "Which team won the 2025 World Series in early November? Answer with the team name only.", "a": "Los Angeles Dodgers", "accept": ["dodgers"]},
-        {"id": "2025-11-b", "cat": "politics", "q": "Who won the November 2025 New York City mayoral election, becoming the city's first Muslim mayor? Answer with the person's name.", "a": "Zohran Mamdani", "accept": ["mamdani"]},
-        {"id": "2025-11-c", "cat": "world", "q": "Which Brazilian Amazon city hosted the COP30 UN climate summit in November 2025? Answer with the city only.", "a": "Belem", "accept": ["belem", "belém"]},
+        {"id": "2025-11-b", "cat": "obituary", "q": "Which Basketball Hall of Famer, a former NBA player and championship-winning head coach, died in November 2025? Answer with the person's name.", "a": "Lenny Wilkens", "accept": ["wilkens"]},
+        {"id": "2025-11-c", "cat": "obituary", "q": "Which American two-time major champion golfer died in November 2025? Answer with the person's name.", "a": "Fuzzy Zoeller", "accept": ["zoeller"]},
         {"id": "2025-11-d", "cat": "disaster", "q": "In November 2025, a catastrophic high-rise fire at an apartment complex killed scores of people in which Asian city? Answer with the city only.", "a": "Hong Kong", "accept": ["hong kong"]}
       ]
     },
@@ -258,7 +258,7 @@
       "questions": [
         {"id": "2026-01-a", "cat": "world", "q": "Which national leader did the US military capture and fly to the United States in January 2026? Answer with the person's name.", "a": "Nicolas Maduro", "accept": ["maduro"]},
         {"id": "2026-01-b", "cat": "obituary", "q": "Which iconic fashion designer died in January 2026? Answer with the designer's name.", "a": "Valentino", "accept": ["valentino", "garavani"]},
-        {"id": "2026-01-c", "cat": "obituary", "q": "Which Emmy-winning actress, beloved for Schitt's Creek and Home Alone, died in January 2026? Answer with the person's name.", "a": "Catherine O'Hara", "accept": ["o'hara", "ohara"]},
+        {"id": "2026-01-c", "cat": "obituary", "q": "Which American cartoonist died in January 2026? Answer with the person's name.", "a": "Scott Adams", "accept": ["scott adams"]},
         {"id": "2026-01-d", "cat": "disaster", "q": "A deadly New Year's fire at a bar killed around 40 people in which country in January 2026? Answer with the country only.", "a": "Switzerland", "accept": ["switzerland"]}
       ]
     },
@@ -281,7 +281,7 @@
     "2026-04": {
       "questions": [
         {"id": "2026-04-a", "cat": "sports", "q": "Which men's team won the 2026 NCAA basketball championship? Answer with the school name.", "a": "Michigan", "accept": ["michigan"]},
-        {"id": "2026-04-b", "cat": "disaster", "q": "In April 2026, deadly floods swept across which East African country? Answer with the country only.", "a": "Kenya", "accept": ["kenya"]},
+        {"id": "2026-04-b", "cat": "disaster", "q": "In April 2026, deadly floods swept across which African country? Answer with the country only.", "a": "Kenya", "accept": ["kenya"]},
         {"id": "2026-04-c", "cat": "sports", "q": "Who won the 2026 Masters golf tournament in April 2026, his second straight Masters title? Answer with the golfer's name.", "a": "Rory McIlroy", "accept": ["mcilroy"]},
         {"id": "2026-04-d", "cat": "sports", "q": "Which women's team won the 2026 NCAA basketball championship? Answer with the school name.", "a": "UCLA", "accept": ["ucla"]}
       ]
