@@ -252,7 +252,7 @@ def main() -> int:
     legend = [
         Patch(facecolor=C_CLAIM, label="Claimed recency (provider docs / OpenRouter)"),
         Patch(facecolor=C_SELF, label="Self-reported recency (model's own claim)"),
-        Patch(facecolor=C_OBS, label="Observed recency (tested, all-4 confirmed)"),
+        Patch(facecolor=C_OBS, label="Observed recency"),
         Patch(facecolor=C_PARTIAL, edgecolor=C_OBS, hatch="xxx",
               label="Partial-knowledge zone"),
     ]
