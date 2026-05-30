@@ -64,9 +64,9 @@ OpenRouter claimed cutoffs.
 ## Layout
 
 - `main.py` — orchestration + table rendering
-- `viz.py` — horizontal bar chart of cutoff recency
+- `viz.py` — horizontal bar chart of cutoff recency (claimed vs. observed)
 - `questions.json` — probe questions (4 per month)
-- `kc/openrouter.py` — API client (chat + leaderboard)
-- `kc/public_cutoffs.py` — source #1 (repo parser + fuzzy matching)
-- `kc/grader.py` — LLM judge + keyword grading
-- `kc/probe.py` — source #2 walk-back algorithm
+- `src/openrouter.py` — API client (chat + leaderboard)
+- `src/public_cutoffs.py` — source #1 (repo parser + fuzzy matching)
+- `src/grader.py` — LLM judge + keyword grading
+- `src/probe.py` — source #2 walk-back algorithm

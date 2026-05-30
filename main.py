@@ -24,10 +24,10 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-from kc.grader import Grader
-from kc.openrouter import OpenRouter
-from kc.probe import probe_model, questions_for_month
-from kc.public_cutoffs import (
+from src.grader import Grader
+from src.openrouter import OpenRouter
+from src.probe import probe_model, questions_for_month
+from src.public_cutoffs import (
     PublicCutoffLookup,
     fetch_repo_table,
     openrouter_published_cutoff,

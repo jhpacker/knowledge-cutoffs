@@ -53,8 +53,8 @@ class ProbeResult:
 
 
 def questions_for_month(month_entry: dict) -> list[dict]:
-    """All questions for the month. The method now uses every candidate (4)."""
-    return list(month_entry["candidates"])
+    """All questions for the month (the method uses every one -- 4 per month)."""
+    return list(month_entry["questions"])
 
 
 def probe_model(
