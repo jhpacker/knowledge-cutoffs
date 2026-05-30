@@ -35,20 +35,6 @@ C_PARTIAL = "#93c5fd"   # partial-knowledge extension (light blue)
 C_CLAIM = "#f59e0b"     # claimed cutoff -- OpenRouter (amber)
 C_SELF = "#9333ea"      # self-reported cutoff -- model's own claim (purple)
 
-# Brand scheme (--brand): color encodes the LAB, shade encodes the signal
-# (light = claimed, medium = self-reported, dark = observed/tested). Used for the
-# frontier chart where there's one model per lab.
-BRAND = {
-    "anthropic": {"claimed": "#E0C2A8", "self": "#C0763F", "tested": "#7A3E22"},  # brown
-    "openai":    {"claimed": "#C4C4C4", "self": "#6E6E6E", "tested": "#0A0A0A"},  # black
-    "google":    {"claimed": "#AECBFA", "self": "#4285F4", "tested": "#0B3D91"},  # blue
-}
-
-
-def brand_palette(model: str):
-    return BRAND.get(provider_of(model))
-
-
 def fmt_release(s: str | None) -> str | None:
     """'YYYY-MM-DD' -> 'May 27, 2026'."""
     if not s:
@@ -116,9 +102,6 @@ def main() -> int:
                     help="comma-separated exact model slugs to include "
                          "(overrides --labs; e.g. the frontier model per lab).")
     ap.add_argument("--title", default=None, help="override the chart title")
-    ap.add_argument("--brand", action="store_true",
-                    help="color bars by lab brand (brown=Anthropic, black=OpenAI, "
-                         "blue=Google); shade encodes the signal.")
     args = ap.parse_args()
 
     rows = json.loads(Path(args.inp).read_text())
@@ -203,51 +186,39 @@ def main() -> int:
         mp_str = most_recent_partial(r)
         mp = ym_to_date(mp_str)
 
-        # Per-row colors: brand shades when --brand, else the fixed signal hues.
-        pal = brand_palette(r["model"]) if args.brand else None
-        c_claim = pal["claimed"] if pal else C_CLAIM
-        c_self = pal["self"] if pal else C_SELF
-        c_obs = pal["tested"] if pal else C_OBS
-        c_part = pal["claimed"] if pal else C_PARTIAL
-        # label text colors (dark + readable)
-        t_claim = (pal["tested"] if pal else "#92400e")
-        t_self = (pal["tested"] if pal else "#6b21a8")
-        t_obs = (pal["tested"] if pal else "#1e3a8a")
-        t_part = (pal["self"] if pal else "#3b82f6")
-
         y_claim = yi + off    # top bar
         y_self = yi           # middle bar
         y_obs = yi - off      # bottom bar
 
-        # --- Claimed (OpenRouter) bar ---
+        # --- Claimed bar (provider docs / OpenRouter) ---
         if claimed:
             ax.barh(y_claim, mdates.date2num(claimed) - base_num, left=base_num,
-                    height=bh, color=c_claim, zorder=2)
+                    height=bh, color=C_CLAIM, zorder=2)
             ax.text(mdates.date2num(claimed) + 6, y_claim, claimed_ym,
-                    va="center", ha="left", fontsize=7.5, color=t_claim)
+                    va="center", ha="left", fontsize=7.5, color="#92400e")
 
         # --- Self-reported bar (model's own claim) ---
         if self_rep:
             ax.barh(y_self, mdates.date2num(self_rep) - base_num, left=base_num,
-                    height=bh, color=c_self, zorder=2)
+                    height=bh, color=C_SELF, zorder=2)
             ax.text(mdates.date2num(self_rep) + 6, y_self, r["self_reported_cutoff"],
-                    va="center", ha="left", fontsize=7.5, color=t_self)
+                    va="center", ha="left", fontsize=7.5, color="#6b21a8")
 
         # --- Observed (tested) bar, with partial-knowledge extension behind it ---
         has_partial = bool(mp and (not tested or mp > tested))
         if has_partial:
             ax.barh(y_obs, mdates.date2num(mp) - base_num, left=base_num,
-                    height=bh, facecolor=c_part, edgecolor=c_obs,
+                    height=bh, facecolor=C_PARTIAL, edgecolor=C_OBS,
                     linewidth=0.6, hatch="xxx", zorder=1)
         if tested:
             ax.barh(y_obs, mdates.date2num(tested) - base_num, left=base_num,
-                    height=bh, color=c_obs, zorder=2)
+                    height=bh, color=C_OBS, zorder=2)
 
         # Labels sit at their TRUE date so position matches value: the confirmed
         # tested cutoff labels the end of the solid bar; the partial-knowledge
         # extent (if any) labels the end of the hatched zone separately.
         if tested:
-            kw = dict(va="center", ha="left", fontsize=7.5, color=t_obs)
+            kw = dict(va="center", ha="left", fontsize=7.5, color="#1e3a8a")
             if has_partial:
                 # this label lands on top of the hatch -> white bg for legibility
                 kw["bbox"] = dict(facecolor="white", edgecolor="none", pad=0.6, alpha=0.85)
@@ -255,7 +226,7 @@ def main() -> int:
         if has_partial:
             ax.text(mdates.date2num(mp) + 6, y_obs, f"{mp_str} partial",
                     va="center", ha="left", fontsize=7, style="italic",
-                    color=t_part)
+                    color="#3b82f6")
 
     ax.set_yticks(y)
     ax.set_yticklabels(labels, fontsize=9)
@@ -278,29 +249,14 @@ def main() -> int:
     # Legend
     from matplotlib.patches import Patch
 
-    if args.brand:
-        # Bars are brand-colored (color = lab), so the legend explains the SHADE
-        # ramp (shade = signal) with a neutral grey example.
-        legend = [
-            Patch(facecolor="#cfcfcf", label="Claimed (provider docs / OpenRouter)"),
-            Patch(facecolor="#7d7d7d", label="Self-reported (model's own claim)"),
-            Patch(facecolor="#1c1c1c", label="Observed (tested, all-4 confirmed)"),
-            Patch(facecolor="#e2e2e2", edgecolor="#1c1c1c", hatch="xxx",
-                  label="Partial-knowledge zone"),
-        ]
-        ax.legend(handles=legend, loc="lower right", fontsize=8, framealpha=0.95,
-                  title="Lighter→darker = claimed→self-reported→observed\n"
-                        "Bar color = lab (brown/black/blue)",
-                  title_fontsize=7.5)
-    else:
-        legend = [
-            Patch(facecolor=C_CLAIM, label="Claimed recency (provider docs / OpenRouter)"),
-            Patch(facecolor=C_SELF, label="Self-reported recency (model's own claim)"),
-            Patch(facecolor=C_OBS, label="Observed recency (tested, all-4 confirmed)"),
-            Patch(facecolor=C_PARTIAL, edgecolor=C_OBS, hatch="xxx",
-                  label="Partial-knowledge zone"),
-        ]
-        ax.legend(handles=legend, loc="lower right", fontsize=8, framealpha=0.95)
+    legend = [
+        Patch(facecolor=C_CLAIM, label="Claimed recency (provider docs / OpenRouter)"),
+        Patch(facecolor=C_SELF, label="Self-reported recency (model's own claim)"),
+        Patch(facecolor=C_OBS, label="Observed recency (tested, all-4 confirmed)"),
+        Patch(facecolor=C_PARTIAL, edgecolor=C_OBS, hatch="xxx",
+              label="Partial-knowledge zone"),
+    ]
+    ax.legend(handles=legend, loc="lower right", fontsize=8, framealpha=0.95)
 
     fig.tight_layout()
     out = Path(args.out)
