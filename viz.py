@@ -29,11 +29,35 @@ import matplotlib.pyplot as plt  # noqa: E402
 
 ROOT = Path(__file__).parent
 
-# Colors
+# Colors -- default scheme distinguishes the three SIGNALS by hue.
 C_OBS = "#2563eb"       # observed / tested-cutoff bar (blue)
 C_PARTIAL = "#93c5fd"   # partial-knowledge extension (light blue)
 C_CLAIM = "#f59e0b"     # claimed cutoff -- OpenRouter (amber)
 C_SELF = "#9333ea"      # self-reported cutoff -- model's own claim (purple)
+
+# Brand scheme (--brand): color encodes the LAB, shade encodes the signal
+# (light = claimed, medium = self-reported, dark = observed/tested). Used for the
+# frontier chart where there's one model per lab.
+BRAND = {
+    "anthropic": {"claimed": "#E0C2A8", "self": "#C0763F", "tested": "#7A3E22"},  # brown
+    "openai":    {"claimed": "#C4C4C4", "self": "#6E6E6E", "tested": "#0A0A0A"},  # black
+    "google":    {"claimed": "#AECBFA", "self": "#4285F4", "tested": "#0B3D91"},  # blue
+}
+
+
+def brand_palette(model: str):
+    return BRAND.get(provider_of(model))
+
+
+def fmt_release(s: str | None) -> str | None:
+    """'YYYY-MM-DD' -> 'May 27, 2026'."""
+    if not s:
+        return None
+    try:
+        d = date.fromisoformat(s[:10])
+    except ValueError:
+        return None
+    return f"{d.strftime('%b')} {d.day}, {d.year}"
 
 # OpenRouter's leaderboard skews toward free / very cheap models, so by default
 # we restrict the chart to models from these leading labs. Keys are the provider
@@ -88,6 +112,13 @@ def main() -> int:
     ap.add_argument("--labs", default=None,
                     help="comma-separated provider prefixes to include "
                          "(default: the leading-labs allowlist). Use 'all' to disable filtering.")
+    ap.add_argument("--models", default=None,
+                    help="comma-separated exact model slugs to include "
+                         "(overrides --labs; e.g. the frontier model per lab).")
+    ap.add_argument("--title", default=None, help="override the chart title")
+    ap.add_argument("--brand", action="store_true",
+                    help="color bars by lab brand (brown=Anthropic, black=OpenAI, "
+                         "blue=Google); shade encodes the signal.")
     args = ap.parse_args()
 
     rows = json.loads(Path(args.inp).read_text())
@@ -97,21 +128,31 @@ def main() -> int:
         print("No probed models in results.json — run main.py first.")
         return 1
 
-    # Restrict to leading labs (OpenRouter's leaderboard over-weights free/cheap models).
-    if args.labs and args.labs.lower() == "all":
-        allow = None
-    elif args.labs:
-        allow = {p.strip().lower() for p in args.labs.split(",") if p.strip()}
+    # --models takes precedence: select exactly those slugs (used for the frontier
+    # chart). Otherwise restrict to leading labs (the leaderboard over-weights
+    # free/cheap models).
+    if args.models:
+        want = [s.strip() for s in args.models.split(",") if s.strip()]
+        by_slug = {r["model"]: r for r in rows}
+        rows = [by_slug[s] for s in want if s in by_slug]
+        missing = [s for s in want if s not in by_slug]
+        if missing:
+            print(f"Not found in results (or not probed): {', '.join(missing)}")
     else:
-        allow = set(LEADING_LABS)
-    if allow is not None:
-        kept = [r for r in rows if provider_of(r["model"]) in allow]
-        dropped = [r["model"] for r in rows if provider_of(r["model"]) not in allow]
-        if dropped:
-            print(f"Filtered out {len(dropped)} non-leading-lab model(s): {', '.join(dropped)}")
-        rows = kept
+        if args.labs and args.labs.lower() == "all":
+            allow = None
+        elif args.labs:
+            allow = {p.strip().lower() for p in args.labs.split(",") if p.strip()}
+        else:
+            allow = set(LEADING_LABS)
+        if allow is not None:
+            kept = [r for r in rows if provider_of(r["model"]) in allow]
+            dropped = [r["model"] for r in rows if provider_of(r["model"]) not in allow]
+            if dropped:
+                print(f"Filtered out {len(dropped)} non-leading-lab model(s): {', '.join(dropped)}")
+            rows = kept
     if not rows:
-        print("No models left after lab filtering.")
+        print("No models left after filtering.")
         return 1
 
     # Sort by tested-cutoff recency (oldest at bottom, newest at top).
@@ -121,7 +162,12 @@ def main() -> int:
 
     rows = sorted(rows, key=sort_key)
 
-    labels = [r.get("name") or r["model"] for r in rows]
+    def ylabel(r):
+        nm = r.get("name") or r["model"]
+        rel = fmt_release(r.get("released"))
+        return f"{nm}\nReleased {rel}" if rel else nm
+
+    labels = [ylabel(r) for r in rows]
     y = list(range(len(rows)))
 
     # Baseline = a bit before the earliest date we plot, so bars are readable.
@@ -154,6 +200,18 @@ def main() -> int:
         mp_str = most_recent_partial(r)
         mp = ym_to_date(mp_str)
 
+        # Per-row colors: brand shades when --brand, else the fixed signal hues.
+        pal = brand_palette(r["model"]) if args.brand else None
+        c_claim = pal["claimed"] if pal else C_CLAIM
+        c_self = pal["self"] if pal else C_SELF
+        c_obs = pal["tested"] if pal else C_OBS
+        c_part = pal["claimed"] if pal else C_PARTIAL
+        # label text colors (dark + readable)
+        t_claim = (pal["tested"] if pal else "#92400e")
+        t_self = (pal["tested"] if pal else "#6b21a8")
+        t_obs = (pal["tested"] if pal else "#1e3a8a")
+        t_part = (pal["self"] if pal else "#3b82f6")
+
         y_claim = yi + off    # top bar
         y_self = yi           # middle bar
         y_obs = yi - off      # bottom bar
@@ -161,32 +219,32 @@ def main() -> int:
         # --- Claimed (OpenRouter) bar ---
         if claimed:
             ax.barh(y_claim, mdates.date2num(claimed) - base_num, left=base_num,
-                    height=bh, color=C_CLAIM, zorder=2)
+                    height=bh, color=c_claim, zorder=2)
             ax.text(mdates.date2num(claimed) + 6, y_claim, r["openrouter_cutoff"],
-                    va="center", ha="left", fontsize=7.5, color="#92400e")
+                    va="center", ha="left", fontsize=7.5, color=t_claim)
 
         # --- Self-reported bar (model's own claim) ---
         if self_rep:
             ax.barh(y_self, mdates.date2num(self_rep) - base_num, left=base_num,
-                    height=bh, color=C_SELF, zorder=2)
+                    height=bh, color=c_self, zorder=2)
             ax.text(mdates.date2num(self_rep) + 6, y_self, r["self_reported_cutoff"],
-                    va="center", ha="left", fontsize=7.5, color="#6b21a8")
+                    va="center", ha="left", fontsize=7.5, color=t_self)
 
         # --- Observed (tested) bar, with partial-knowledge extension behind it ---
         has_partial = bool(mp and (not tested or mp > tested))
         if has_partial:
             ax.barh(y_obs, mdates.date2num(mp) - base_num, left=base_num,
-                    height=bh, facecolor=C_PARTIAL, edgecolor=C_OBS,
+                    height=bh, facecolor=c_part, edgecolor=c_obs,
                     linewidth=0.6, hatch="xxx", zorder=1)
         if tested:
             ax.barh(y_obs, mdates.date2num(tested) - base_num, left=base_num,
-                    height=bh, color=C_OBS, zorder=2)
+                    height=bh, color=c_obs, zorder=2)
 
         # Labels sit at their TRUE date so position matches value: the confirmed
         # tested cutoff labels the end of the solid bar; the partial-knowledge
         # extent (if any) labels the end of the hatched zone separately.
         if tested:
-            kw = dict(va="center", ha="left", fontsize=7.5, color="#1e3a8a")
+            kw = dict(va="center", ha="left", fontsize=7.5, color=t_obs)
             if has_partial:
                 # this label lands on top of the hatch -> white bg for legibility
                 kw["bbox"] = dict(facecolor="white", edgecolor="none", pad=0.6, alpha=0.85)
@@ -194,7 +252,7 @@ def main() -> int:
         if has_partial:
             ax.text(mdates.date2num(mp) + 6, y_obs, f"{mp_str} partial",
                     va="center", ha="left", fontsize=7, style="italic",
-                    color="#3b82f6")
+                    color=t_part)
 
     ax.set_yticks(y)
     ax.set_yticklabels(labels, fontsize=9)
@@ -208,8 +266,8 @@ def main() -> int:
     ax.set_xlim(base_num, max(mdates.date2num(d) for d in all_dates) + 30)
 
     ax.set_xlabel("Knowledge cutoff (more recent →)", fontsize=10)
-    ax.set_title("OpenRouter top models — claimed vs. self-reported vs. observed "
-                 "knowledge-cutoff recency",
+    ax.set_title(args.title or ("OpenRouter top models — claimed vs. self-reported "
+                                "vs. observed knowledge-cutoff recency"),
                  fontsize=12.5, fontweight="bold")
     ax.grid(axis="x", linestyle=":", alpha=0.4)
     ax.spines[["top", "right"]].set_visible(False)
@@ -217,14 +275,29 @@ def main() -> int:
     # Legend
     from matplotlib.patches import Patch
 
-    legend = [
-        Patch(facecolor=C_CLAIM, label="Claimed recency (OpenRouter)"),
-        Patch(facecolor=C_SELF, label="Self-reported recency (model's own claim)"),
-        Patch(facecolor=C_OBS, label="Observed recency (tested, all-4 confirmed)"),
-        Patch(facecolor=C_PARTIAL, edgecolor=C_OBS, hatch="xxx",
-              label="Partial-knowledge zone"),
-    ]
-    ax.legend(handles=legend, loc="lower right", fontsize=8, framealpha=0.95)
+    if args.brand:
+        # Bars are brand-colored (color = lab), so the legend explains the SHADE
+        # ramp (shade = signal) with a neutral grey example.
+        legend = [
+            Patch(facecolor="#cfcfcf", label="Claimed (OpenRouter)"),
+            Patch(facecolor="#7d7d7d", label="Self-reported (model's own claim)"),
+            Patch(facecolor="#1c1c1c", label="Observed (tested, all-4 confirmed)"),
+            Patch(facecolor="#e2e2e2", edgecolor="#1c1c1c", hatch="xxx",
+                  label="Partial-knowledge zone"),
+        ]
+        ax.legend(handles=legend, loc="lower right", fontsize=8, framealpha=0.95,
+                  title="Lighter→darker = claimed→self-reported→observed\n"
+                        "Bar color = lab (brown/black/blue)",
+                  title_fontsize=7.5)
+    else:
+        legend = [
+            Patch(facecolor=C_CLAIM, label="Claimed recency (OpenRouter)"),
+            Patch(facecolor=C_SELF, label="Self-reported recency (model's own claim)"),
+            Patch(facecolor=C_OBS, label="Observed recency (tested, all-4 confirmed)"),
+            Patch(facecolor=C_PARTIAL, edgecolor=C_OBS, hatch="xxx",
+                  label="Partial-knowledge zone"),
+        ]
+        ax.legend(handles=legend, loc="lower right", fontsize=8, framealpha=0.95)
 
     fig.tight_layout()
     out = Path(args.out)

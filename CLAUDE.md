@@ -69,7 +69,15 @@ leave trailing commas (invalid JSON) — re-validate after they touch it.
 
 ## Layout
 
-- `main.py` — orchestration + Markdown/CSV/JSON table rendering.
+- `main.py` — orchestration + Markdown/CSV/JSON table rendering. Each row also
+  carries `released` (model release date, from OpenRouter's `created` field).
+- `frontier.py` — builds `out/frontier.json` for the **frontier chart**: the
+  newest model per lab (`openai/gpt-5.5`, `google/gemini-3.5-flash`,
+  `anthropic/claude-opus-4.8`). Reuses rows from `results.json`; probes any model
+  not in there (e.g. a release that post-dates the last full run). Render with
+  `python viz.py --in out/frontier.json --labs all --brand --out
+  out/recency_frontier.png`. `--brand` colors bars by lab (brown=Anthropic,
+  black=OpenAI, blue=Google), shade = signal; release date shows in the y-label.
 - `viz.py` — grouped horizontal bar chart, **three bars per model**: claimed
   (OpenRouter, amber) vs. self-reported (model's own claim, purple) vs. observed
   (tested, blue), with a hatched partial-knowledge zone extending past the solid

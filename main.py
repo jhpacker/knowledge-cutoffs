@@ -22,6 +22,7 @@ import os
 import sys
 import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from datetime import datetime, timezone
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -54,6 +55,17 @@ def usable_months(questions: dict) -> list[str]:
 
 def fmt(v) -> str:
     return v if v else "—"
+
+
+def release_date(model_dict: dict) -> str | None:
+    """OpenRouter `created` unix ts -> 'YYYY-MM-DD' (the model's release date)."""
+    ts = model_dict.get("created")
+    if not ts:
+        return None
+    try:
+        return datetime.fromtimestamp(ts, tz=timezone.utc).strftime("%Y-%m-%d")
+    except (ValueError, OSError, TypeError, OverflowError):
+        return None
 
 
 def main() -> int:
@@ -184,6 +196,7 @@ def main() -> int:
             "rank": i,
             "model": slug,
             "name": name,
+            "released": release_date(m),       # model release date (OpenRouter `created`)
             "repo_cutoff": repo_cutoff,        # source #1
             "openrouter_cutoff": or_cutoff,    # OpenRouter /models knowledge_cutoff
             "repo_vs_openrouter": repo_vs_or,
