@@ -102,6 +102,8 @@ def main() -> int:
                     help="comma-separated exact model slugs to include "
                          "(overrides --labs; e.g. the frontier model per lab).")
     ap.add_argument("--title", default=None, help="override the chart title")
+    ap.add_argument("--hide-self-report", action="store_true",
+                    help="omit the self-reported (model's own claim) bar.")
     args = ap.parse_args()
 
     rows = json.loads(Path(args.inp).read_text())
@@ -173,8 +175,13 @@ def main() -> int:
 
     fig, ax = plt.subplots(figsize=(11, 1.05 * len(rows) + 2.2))
 
-    bh = 0.24            # height of each of the three bars
-    off = bh + 0.02      # vertical offset between adjacent bars
+    show_self = not args.hide_self_report
+    if show_self:
+        bh = 0.24            # height of each of the three bars
+        off = bh + 0.02      # vertical offset between adjacent bars
+    else:
+        bh = 0.30            # two bars -> a bit taller, centered around yi
+        off = bh / 2 + 0.03
 
     for yi, r in zip(y, rows):
         # Claimed = provider-official cutoff if present (e.g. Anthropic's docs),
@@ -187,7 +194,7 @@ def main() -> int:
         mp = ym_to_date(mp_str)
 
         y_claim = yi + off    # top bar
-        y_self = yi           # middle bar
+        y_self = yi           # middle bar (only when show_self)
         y_obs = yi - off      # bottom bar
 
         # --- Claimed bar (provider docs / OpenRouter) ---
@@ -198,7 +205,7 @@ def main() -> int:
                     va="center", ha="left", fontsize=7.5, color="#92400e")
 
         # --- Self-reported bar (model's own claim) ---
-        if self_rep:
+        if show_self and self_rep:
             ax.barh(y_self, mdates.date2num(self_rep) - base_num, left=base_num,
                     height=bh, color=C_SELF, zorder=2)
             ax.text(mdates.date2num(self_rep) + 6, y_self, r["self_reported_cutoff"],
@@ -249,9 +256,10 @@ def main() -> int:
     # Legend
     from matplotlib.patches import Patch
 
-    legend = [
-        Patch(facecolor=C_CLAIM, label="Claimed recency (provider docs / OpenRouter)"),
-        Patch(facecolor=C_SELF, label="Self-reported recency (model's own claim)"),
+    legend = [Patch(facecolor=C_CLAIM, label="Claimed recency (provider docs / OpenRouter)")]
+    if show_self:
+        legend.append(Patch(facecolor=C_SELF, label="Self-reported recency (model's own claim)"))
+    legend += [
         Patch(facecolor=C_OBS, label="Observed recency"),
         Patch(facecolor=C_PARTIAL, edgecolor=C_OBS, hatch="xxx",
               label="Partial-knowledge zone"),

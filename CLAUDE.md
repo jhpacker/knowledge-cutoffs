@@ -75,9 +75,11 @@ leave trailing commas (invalid JSON) — re-validate after they touch it.
   newest model per lab (`openai/gpt-5.5`, `google/gemini-3.5-flash`,
   `anthropic/claude-opus-4.8`). Reuses rows from `results.json`; probes any model
   not in there (e.g. a release that post-dates the last full run). Render with
-  `python viz.py --in out/frontier.json --labs all --out out/recency_frontier.png
-  --title "Latest Training Data in Frontier Models: Claimed vs Observed"`.
-  Uses the same signal colors as the main chart
+  `python viz.py --in out/frontier.json --labs all --hide-self-report --out
+  out/recency_frontier.png --title "Latest Training Data in Frontier Models:
+  Claimed vs Observed"`. `--hide-self-report` drops the model's-own-claim bar
+  (the frontier chart shows just claimed vs observed). Uses the same signal
+  colors as the main chart
   (amber=claimed, purple=self-reported, blue=observed) so the three claim types
   stay distinguishable; release date shows in the y-label. `claimed_cutoff` in a
   row (e.g. Anthropic's docs value) overrides OpenRouter's field for the claimed
