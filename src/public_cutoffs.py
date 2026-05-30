@@ -43,9 +43,12 @@ def _normalize_ym(text: str) -> str | None:
         "jan": 1, "feb": 2, "mar": 3, "apr": 4, "may": 5, "jun": 6,
         "jul": 7, "aug": 8, "sep": 9, "oct": 10, "nov": 11, "dec": 12,
     }
-    m = re.search(r"([A-Za-z]{3,9})[ ,]+(20\d{2})", t)
-    if m and m.group(1)[:3].lower() in months:
-        return f"{m.group(2)}-{months[m.group(1)[:3].lower()]:02d}"
+    # Scan for the first ACTUAL month-name + year (skip non-month words like
+    # "early 2025" so a later "January 2025" still wins over a year-only match).
+    for mm in re.finditer(r"([A-Za-z]{3,9})[ ,]+(20\d{2})", t):
+        key = mm.group(1)[:3].lower()
+        if key in months:
+            return f"{mm.group(2)}-{months[key]:02d}"
     m = re.search(r"\b(20\d{2})\b", t)
     if m:
         return f"{m.group(1)}-12"  # year-only -> treat as end of year

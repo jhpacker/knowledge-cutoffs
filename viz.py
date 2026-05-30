@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Visualize the recency of OpenRouter's top models' knowledge cutoffs.
 
-Reads out/results.json and renders a grouped horizontal bar chart with TWO bars
+Reads out/results.json and renders a grouped horizontal bar chart with THREE bars
 per model:
-  * Claimed recency  -> OpenRouter's published `knowledge_cutoff`.
-  * Observed recency -> the empirically *tested* cutoff (source #2).
+  * Claimed recency       -> OpenRouter's published `knowledge_cutoff`.
+  * Self-reported recency  -> the model's own answer when asked directly (#3).
+  * Observed recency       -> the empirically *tested* cutoff (source #2).
 A lighter extension on the observed bar shows the "partial-knowledge zone" --
 months beyond the confirmed cutoff where the model still got *some* (but not all
 4) questions right.
@@ -32,6 +33,7 @@ ROOT = Path(__file__).parent
 C_OBS = "#2563eb"       # observed / tested-cutoff bar (blue)
 C_PARTIAL = "#93c5fd"   # partial-knowledge extension (light blue)
 C_CLAIM = "#f59e0b"     # claimed cutoff -- OpenRouter (amber)
+C_SELF = "#9333ea"      # self-reported cutoff -- model's own claim (purple)
 
 # OpenRouter's leaderboard skews toward free / very cheap models, so by default
 # we restrict the chart to models from these leading labs. Keys are the provider
@@ -125,7 +127,8 @@ def main() -> int:
     # Baseline = a bit before the earliest date we plot, so bars are readable.
     all_dates = []
     for r in rows:
-        for v in (r.get("tested_cutoff"), r.get("openrouter_cutoff")):
+        for v in (r.get("tested_cutoff"), r.get("openrouter_cutoff"),
+                  r.get("self_reported_cutoff")):
             d = ym_to_date(v)
             if d:
                 all_dates.append(d)
@@ -139,17 +142,21 @@ def main() -> int:
     base = date(base.year - (1 if base.month <= 3 else 0), ((base.month - 3 - 1) % 12) + 1, 1)
     base_num = mdates.date2num(base)
 
-    fig, ax = plt.subplots(figsize=(11, 0.85 * len(rows) + 2.2))
+    fig, ax = plt.subplots(figsize=(11, 1.05 * len(rows) + 2.2))
 
-    bh = 0.34  # height of each of the two bars
+    bh = 0.24            # height of each of the three bars
+    off = bh + 0.02      # vertical offset between adjacent bars
 
     for yi, r in zip(y, rows):
         claimed = ym_to_date(r.get("openrouter_cutoff"))
+        self_rep = ym_to_date(r.get("self_reported_cutoff"))
         tested = ym_to_date(r.get("tested_cutoff"))
-        mp = ym_to_date(most_recent_partial(r))
+        mp_str = most_recent_partial(r)
+        mp = ym_to_date(mp_str)
 
-        y_claim = yi + bh / 2 + 0.02   # upper bar
-        y_obs = yi - bh / 2 - 0.02     # lower bar
+        y_claim = yi + off    # top bar
+        y_self = yi           # middle bar
+        y_obs = yi - off      # bottom bar
 
         # --- Claimed (OpenRouter) bar ---
         if claimed:
@@ -157,6 +164,13 @@ def main() -> int:
                     height=bh, color=C_CLAIM, zorder=2)
             ax.text(mdates.date2num(claimed) + 6, y_claim, r["openrouter_cutoff"],
                     va="center", ha="left", fontsize=7.5, color="#92400e")
+
+        # --- Self-reported bar (model's own claim) ---
+        if self_rep:
+            ax.barh(y_self, mdates.date2num(self_rep) - base_num, left=base_num,
+                    height=bh, color=C_SELF, zorder=2)
+            ax.text(mdates.date2num(self_rep) + 6, y_self, r["self_reported_cutoff"],
+                    va="center", ha="left", fontsize=7.5, color="#6b21a8")
 
         # --- Observed (tested) bar, with partial-knowledge extension behind it ---
         has_partial = bool(mp and (not tested or mp > tested))
@@ -168,17 +182,23 @@ def main() -> int:
             ax.barh(y_obs, mdates.date2num(tested) - base_num, left=base_num,
                     height=bh, color=C_OBS, zorder=2)
 
-        # Month label goes at the END of the whole bar: past the partial zone if
-        # there is one, otherwise just past the solid tested-cutoff bar.
-        if tested or has_partial:
-            label_x = mdates.date2num(mp if has_partial else tested) + 6
-            label = r["tested_cutoff"] if tested else f"~{r['tested_cutoff'] or 'none'}"
-            ax.text(label_x, y_obs, label, va="center", ha="left",
-                    fontsize=7.5, color="#1e3a8a")
+        # Labels sit at their TRUE date so position matches value: the confirmed
+        # tested cutoff labels the end of the solid bar; the partial-knowledge
+        # extent (if any) labels the end of the hatched zone separately.
+        if tested:
+            kw = dict(va="center", ha="left", fontsize=7.5, color="#1e3a8a")
+            if has_partial:
+                # this label lands on top of the hatch -> white bg for legibility
+                kw["bbox"] = dict(facecolor="white", edgecolor="none", pad=0.6, alpha=0.85)
+            ax.text(mdates.date2num(tested) + 6, y_obs, r["tested_cutoff"], **kw)
+        if has_partial:
+            ax.text(mdates.date2num(mp) + 6, y_obs, f"{mp_str} partial",
+                    va="center", ha="left", fontsize=7, style="italic",
+                    color="#3b82f6")
 
     ax.set_yticks(y)
     ax.set_yticklabels(labels, fontsize=9)
-    ax.set_ylim(-0.8, len(rows) - 0.2)
+    ax.set_ylim(-0.9, len(rows) - 0.1)
 
     # X axis as dates.
     ax.xaxis_date()
@@ -188,8 +208,9 @@ def main() -> int:
     ax.set_xlim(base_num, max(mdates.date2num(d) for d in all_dates) + 30)
 
     ax.set_xlabel("Knowledge cutoff (more recent →)", fontsize=10)
-    ax.set_title("OpenRouter top models — claimed vs. observed knowledge-cutoff recency",
-                 fontsize=13, fontweight="bold")
+    ax.set_title("OpenRouter top models — claimed vs. self-reported vs. observed "
+                 "knowledge-cutoff recency",
+                 fontsize=12.5, fontweight="bold")
     ax.grid(axis="x", linestyle=":", alpha=0.4)
     ax.spines[["top", "right"]].set_visible(False)
 
@@ -198,6 +219,7 @@ def main() -> int:
 
     legend = [
         Patch(facecolor=C_CLAIM, label="Claimed recency (OpenRouter)"),
+        Patch(facecolor=C_SELF, label="Self-reported recency (model's own claim)"),
         Patch(facecolor=C_OBS, label="Observed recency (tested, all-4 confirmed)"),
         Patch(facecolor=C_PARTIAL, edgecolor=C_OBS, hatch="xxx",
               label="Partial-knowledge zone"),

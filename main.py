@@ -20,6 +20,8 @@ import csv
 import json
 import os
 import sys
+import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -32,6 +34,7 @@ from src.public_cutoffs import (
     fetch_repo_table,
     openrouter_published_cutoff,
 )
+from src.self_report import ask_self_reported_cutoff, is_unreachable
 
 ROOT = Path(__file__).parent
 OUT = ROOT / "out"
@@ -63,6 +66,8 @@ def main() -> int:
     ap.add_argument("--verbose", action="store_true", help="print per-month probe progress")
     ap.add_argument("--limit-models", type=int, default=None, help="probe only the first N models (debug)")
     ap.add_argument("--models", default=None, help="comma-separated slugs to probe instead of the leaderboard")
+    ap.add_argument("--workers", type=int, default=1,
+                    help="probe this many models concurrently (one thread per model; default 1)")
     args = ap.parse_args()
 
     try:
@@ -98,22 +103,63 @@ def main() -> int:
     judge_model = None if args.judge.lower() == "none" else args.judge
     grader = Grader(client, judge_model)
 
-    rows = []
-    probe_targets = leaderboard if args.limit_models is None else leaderboard[: args.limit_models]
+    print_lock = threading.Lock()
 
-    for i, m in enumerate(leaderboard, 1):
+    def process_model(i: int, m: dict) -> dict:
         slug = m.get("slug") or m.get("id")
         name = m.get("name") or slug
 
         repo_cutoff = lookup.match(m).cutoff            # source #1: HaoooWang repo
         or_cutoff = openrouter_published_cutoff(m)       # OpenRouter /models field
 
+        # self-report (#3): ask the model directly (skipped in dry-run; costs 1 call).
+        # This call also doubles as a reachability pre-flight: if it 404s, the model
+        # has no chat endpoint and we skip the expensive walk-back probe entirely.
+        self_raw = None
+        self_cutoff = None
+        unreachable = False
+        if not args.dry_run:
+            self_raw, self_cutoff, self_err = ask_self_reported_cutoff(client, slug)
+            unreachable = is_unreachable(self_err)
+            if args.verbose:
+                with print_lock:
+                    if unreachable:
+                        print(f"    [{slug}] UNREACHABLE ({self_err}); skipping probe", flush=True)
+                    else:
+                        print(f"    [{slug}] self-reported cutoff: "
+                              f"{self_cutoff or '—'}  (raw: {self_raw!r})", flush=True)
+
         tested_cutoff = None
-        note = ""
+        note = "no chat endpoint (404); probe skipped" if unreachable else ""
         months_detail: list[dict] = []
-        if not args.dry_run and (args.limit_models is None or i <= args.limit_models):
-            print(f"[{i}/{len(leaderboard)}] probing {slug} ...")
-            res = probe_model(client, grader, slug, months, questions, verbose=args.verbose)
+        if not args.dry_run and not unreachable and (args.limit_models is None or i <= args.limit_models):
+            with print_lock:
+                print(f"[{i}/{len(leaderboard)}] probing {slug} ...", flush=True)
+
+            progress = None
+            on_answer = None
+            if args.verbose:
+                def progress(month, mark, nc, nt, _slug=slug):
+                    with print_lock:
+                        print(f"    [{_slug}] {month}: {mark} ({nc}/{nt})", flush=True)
+
+                def on_answer(month, q, reply, correct, error, _slug=slug):
+                    verdict = "CORRECT" if correct else ("ERROR" if error else "WRONG")
+                    reply_1l = " ".join((reply or "").split())
+                    accept = "|".join(q.get("accept", []))
+                    with print_lock:
+                        print(
+                            f"      [{_slug}] {month} {q['id']} ({q.get('cat','?')}) {verdict}\n"
+                            f"        Q: {q['q']}\n"
+                            f"        expected: {q['a']}  [accept: {accept}]\n"
+                            f"        reply: {reply_1l or ('<error: ' + str(error) + '>')}",
+                            flush=True,
+                        )
+
+            res = probe_model(
+                client, grader, slug, months, questions,
+                verbose=args.verbose, progress=progress, on_answer=on_answer,
+            )
             tested_cutoff = res.tested_cutoff
             note = res.note
             months_detail = [
@@ -125,6 +171,8 @@ def main() -> int:
                 }
                 for mr in res.months_tested
             ]
+            with print_lock:
+                print(f"[{i}/{len(leaderboard)}] done {slug} -> tested={tested_cutoff or '—'}", flush=True)
 
         repo_vs_or = ""
         if repo_cutoff and or_cutoff:
@@ -132,20 +180,31 @@ def main() -> int:
 
         partial_months = [d["month"] for d in months_detail if d["status"] == "partial"]
 
-        rows.append(
-            {
-                "rank": i,
-                "model": slug,
-                "name": name,
-                "repo_cutoff": repo_cutoff,        # source #1
-                "openrouter_cutoff": or_cutoff,    # OpenRouter /models knowledge_cutoff
-                "repo_vs_openrouter": repo_vs_or,
-                "tested_cutoff": tested_cutoff,    # source #2
-                "partial_months": partial_months,
-                "months_detail": months_detail,
-                "note": note,
-            }
-        )
+        return {
+            "rank": i,
+            "model": slug,
+            "name": name,
+            "repo_cutoff": repo_cutoff,        # source #1
+            "openrouter_cutoff": or_cutoff,    # OpenRouter /models knowledge_cutoff
+            "repo_vs_openrouter": repo_vs_or,
+            "self_reported_cutoff": self_cutoff,  # source #3: model's own claim
+            "self_reported_raw": self_raw,
+            "tested_cutoff": tested_cutoff,    # source #2
+            "partial_months": partial_months,
+            "months_detail": months_detail,
+            "note": note,
+        }
+
+    workers = max(1, args.workers)
+    if workers == 1 or args.dry_run:
+        rows = [process_model(i, m) for i, m in enumerate(leaderboard, 1)]
+    else:
+        rows = []
+        with ThreadPoolExecutor(max_workers=workers) as ex:
+            futures = [ex.submit(process_model, i, m) for i, m in enumerate(leaderboard, 1)]
+            for fut in as_completed(futures):
+                rows.append(fut.result())
+        rows.sort(key=lambda r: r["rank"])  # restore leaderboard order
 
     # ---- render -------------------------------------------------------
     OUT.mkdir(exist_ok=True)
@@ -154,7 +213,8 @@ def main() -> int:
     (OUT / "results.json").write_text(json.dumps(rows, indent=2))
     csv_cols = [
         "rank", "model", "name", "repo_cutoff", "openrouter_cutoff",
-        "repo_vs_openrouter", "tested_cutoff", "partial_months", "note",
+        "repo_vs_openrouter", "self_reported_cutoff", "self_reported_raw",
+        "tested_cutoff", "partial_months", "note",
     ]
     with (OUT / "results.csv").open("w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=csv_cols, extrasaction="ignore")
@@ -176,8 +236,8 @@ def render_markdown(rows: list[dict], args) -> str:
         f"Leaderboard order: `{args.order}` · top {args.top}"
         + ("" if args.dry_run else f" · judge: `{args.judge}`"),
         "",
-        "| # | Model | Repo cutoff (#1) | OpenRouter cutoff | Tested cutoff (#2) | Partial months | Notes |",
-        "|---|-------|------------------|-------------------|--------------------|----------------|-------|",
+        "| # | Model | Repo cutoff (#1) | OpenRouter cutoff | Self-reported (#3) | Tested cutoff (#2) | Partial months | Notes |",
+        "|---|-------|------------------|-------------------|--------------------|--------------------|----------------|-------|",
     ]
     for r in rows:
         tested = "(dry-run)" if args.dry_run else fmt(r["tested_cutoff"])
@@ -186,7 +246,8 @@ def render_markdown(rows: list[dict], args) -> str:
         note = " · ".join(x for x in [r.get("repo_vs_openrouter"), r["note"]] if x)
         lines.append(
             f"| {r['rank']} | `{r['model']}` | {fmt(r['repo_cutoff'])} | "
-            f"{fmt(r['openrouter_cutoff'])} | {tested} | {partial_cell} | {note} |"
+            f"{fmt(r['openrouter_cutoff'])} | {fmt(r.get('self_reported_cutoff'))} | "
+            f"{tested} | {partial_cell} | {note} |"
         )
     lines += [
         "",
@@ -194,6 +255,9 @@ def render_markdown(rows: list[dict], args) -> str:
         "(Anthropic = Training Data cut-off)._",
         "_**OpenRouter cutoff:** the `knowledge_cutoff` field from OpenRouter's "
         "`/api/v1/models`. Notes flag whether it `match`es or `differ`s from the repo._",
+        "_**Self-reported (#3):** the model's own answer when asked directly for its "
+        "knowledge cutoff (month + year). Noisy — models often parrot the base "
+        "model's cutoff, omit the year, or refuse._",
         "_**Tested cutoff (#2):** month-by-month walk-back probe; a month passes only "
         "if **all 4** questions are correct, and the cutoff is the most recent of two "
         "consecutive passed months._",

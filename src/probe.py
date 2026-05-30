@@ -65,6 +65,8 @@ def probe_model(
     questions: dict,
     require_consecutive: int = 2,
     verbose: bool = False,
+    progress=None,
+    on_answer=None,
 ) -> ProbeResult:
     """months: list ordered most-recent-first. questions: the 'months' dict."""
     streak = 0
@@ -80,6 +82,7 @@ def probe_model(
 
         details = []
         n_correct = 0
+        n_error = 0
         for q in qs:
             res = client.chat(
                 model,
@@ -89,21 +92,39 @@ def probe_model(
                 ],
             )
             if not res.ok:
+                n_error += 1
                 details.append({"id": q["id"], "ok": False, "reply": "", "error": res.error})
+                if on_answer is not None:
+                    on_answer(month, q, "", False, res.error)
                 continue
             correct = grader.grade(q["q"], q["a"], res.text, q.get("accept", []))
             details.append(
                 {"id": q["id"], "ok": correct, "reply": res.text[:300]}
             )
+            if on_answer is not None:
+                on_answer(month, q, res.text, correct, None)
             if correct:
                 n_correct += 1
 
         n_total = len(qs)
+
+        # Safety net: if the very first probed month errored on EVERY question
+        # (e.g. the model has no chat endpoint / 404s), abort instead of grinding
+        # through every remaining month.
+        if not results and n_error == n_total:
+            return ProbeResult(
+                model, None, results,
+                note="no successful responses (model unreachable / no chat endpoint?)",
+            )
+
         passed = n_correct == n_total  # require ALL questions correct
         results.append(MonthResult(month, passed, details, n_correct, n_total))
         if verbose:
             mark = "PASS" if passed else ("partial" if n_correct else "fail")
-            print(f"    {month}: {mark} ({n_correct}/{n_total})")
+            if progress is not None:
+                progress(month, mark, n_correct, n_total)
+            else:
+                print(f"    {month}: {mark} ({n_correct}/{n_total})")
 
         if passed:
             if streak == 0:

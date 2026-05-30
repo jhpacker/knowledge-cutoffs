@@ -5,7 +5,7 @@ Context for Claude (and humans) picking this project back up. Read this first.
 ## What this project does
 
 Discovers and compares the **knowledge-cutoff date** of the most popular models
-on OpenRouter's leaderboard, from three signals, and renders a chart:
+on OpenRouter's leaderboard, from four signals, and renders a chart:
 
 1. **Repo cutoff (#1, claimed):** the community-collected
    [HaoooWang/llm-knowledge-cutoff-dates](https://github.com/HaoooWang/llm-knowledge-cutoff-dates)
@@ -13,10 +13,30 @@ on OpenRouter's leaderboard, from three signals, and renders a chart:
    Knowledge cut-off. Parsed from the README's Markdown pipe tables.
 2. **OpenRouter cutoff (claimed):** the `knowledge_cutoff` field on
    `/api/v1/models`. Shown as its own column to see where it matches/differs.
-3. **Tested cutoff (#2, observed):** an empirical month-by-month "walk-back"
+3. **Self-reported cutoff (#3, `src/self_report.py`):** ask the model directly
+   ("What is your knowledge cutoff date?"). Noisy — models often parrot the
+   *base* model's cutoff, return empty/reasoning-only content, or refuse — so
+   it's a contrast signal, not ground truth. The call also doubles as a
+   reachability **pre-flight**: a 404 means the model has no chat endpoint and we
+   skip the (expensive) walk-back probe entirely (`is_unreachable()`).
+4. **Tested cutoff (#2, observed):** an empirical month-by-month "walk-back"
    probe over real news events (see method below).
 
 Output: `out/results.{md,json,csv}` (table) and `out/recency.png` (chart).
+
+## Running the full probe
+
+- `python main.py --top 20 --judge none --workers 20 --verbose` runs the full
+  leaderboard. **`--workers N`** probes N models concurrently (one thread per
+  model; months within a model stay sequential — the walk-back is inherently
+  serial). The shared `requests.Session` is thread-safe.
+- `--verbose` logs full **per-question Q&A** (question, expected answer, accept
+  keywords, the model's reply, CORRECT/WRONG/ERROR) so grading and guessable
+  questions can be audited. With `--workers` each line is prefixed `[slug]`.
+- `results.json` is written **only at the end**, after all models finish — do
+  not kill a near-complete run expecting partial output (you'll lose everything).
+- Background runs: `nohup python3 -u main.py ... > out/full_run.log 2>&1 &`,
+  then wait on the PID (`while kill -0 $PID 2>/dev/null; do sleep 10; done`).
 
 ## The tested-cutoff method (`src/probe.py`)
 
@@ -50,9 +70,13 @@ leave trailing commas (invalid JSON) — re-validate after they touch it.
 ## Layout
 
 - `main.py` — orchestration + Markdown/CSV/JSON table rendering.
-- `viz.py` — grouped horizontal bar chart: **claimed (OpenRouter)** vs.
-  **observed (tested)** recency, with a hatched partial-knowledge zone. Filters
-  to leading labs by default (see below).
+- `viz.py` — grouped horizontal bar chart, **three bars per model**: claimed
+  (OpenRouter, amber) vs. self-reported (model's own claim, purple) vs. observed
+  (tested, blue), with a hatched partial-knowledge zone extending past the solid
+  tested bar. Each date label sits at its **true** x: the confirmed tested cutoff
+  labels the solid-bar end (white bg when it overlaps the hatch); the partial
+  extent gets its own `YYYY-MM partial` label at the hatch end. Filters to
+  leading labs by default (see below).
 - `questions.json` — `{ "_meta": ..., "months": { "YYYY-MM": { "questions":[4] }}}`.
 - `src/` — the Python package (importable as `src.*`). Internal modules use
   relative imports; only `main.py` imports the package by name.
