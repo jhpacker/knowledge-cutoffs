@@ -120,7 +120,8 @@ def main() -> int:
         # --- Observed (tested) bar, with partial-knowledge extension behind it ---
         if mp and tested and mp > tested:
             ax.barh(y_obs, mdates.date2num(mp) - base_num, left=base_num,
-                    height=bh, color=C_PARTIAL, zorder=1)
+                    height=bh, facecolor=C_PARTIAL, edgecolor=C_OBS,
+                    linewidth=0.6, hatch="xxx", zorder=1)
         if tested:
             ax.barh(y_obs, mdates.date2num(tested) - base_num, left=base_num,
                     height=bh, color=C_OBS, zorder=2)
@@ -153,7 +154,8 @@ def main() -> int:
     legend = [
         Patch(facecolor=C_CLAIM, label="Claimed recency (OpenRouter)"),
         Patch(facecolor=C_OBS, label="Observed recency (tested, all-4 confirmed)"),
-        Patch(facecolor=C_PARTIAL, label="Partial-knowledge zone"),
+        Patch(facecolor=C_PARTIAL, edgecolor=C_OBS, hatch="xxx",
+              label="Partial-knowledge zone"),
     ]
     ax.legend(handles=legend, loc="lower right", fontsize=8, framealpha=0.95)
 
